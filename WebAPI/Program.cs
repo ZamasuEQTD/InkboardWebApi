@@ -1,6 +1,7 @@
 using Domain.Usuarios.Models;
 using Domain.Usuarios.Models.ValueObjects;
 using Infraestructure.Persistence;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 
 
@@ -30,6 +31,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 
     app.UseSwagger();
+
     app.UseSwaggerUI();
 }
 
