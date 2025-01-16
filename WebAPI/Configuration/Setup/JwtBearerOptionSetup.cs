@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Infraestructure.Authentication.Jwt;
 
-namespace WebApi.Configuration {
+namespace WebAPI.Configuration.Setup {
 
     public class JwtBearerOptionsSetup : IConfigureNamedOptions<JwtBearerOptions>
     {

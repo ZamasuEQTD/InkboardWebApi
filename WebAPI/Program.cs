@@ -6,9 +6,8 @@ using Infraestructure;
 using Infraestructure.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using WebApi.Configuration;
 using WebAPI.Configuration;
-
+using WebAPI.Configuration.Setup;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,9 +15,8 @@ builder.Services.AddIdentity<Usuario, IdentityRole<IdentityId>>()
 .AddRoles<IdentityRole<IdentityId>>()
 .AddEntityFrameworkStores<InkboardDbContext>()
 .AddDefaultTokenProviders();
+
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
-
-
 
 builder.Services.AddApplication().AddInfraestructure().AddPersistence(builder.Configuration);
 
@@ -40,6 +38,7 @@ builder.Services.AddAuthentication(
         options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
     }
 ).AddJwtBearer();
+
 builder.Services.ConfigureOptions<JwtOptionsSetup>();
 builder.Services.ConfigureOptions<JwtBearerOptionsSetup>();
 
