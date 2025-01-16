@@ -7,6 +7,7 @@ using Infraestructure.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using WebApi.Configuration;
+using WebAPI.Configuration;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +16,8 @@ builder.Services.AddIdentity<Usuario, IdentityRole<IdentityId>>()
 .AddRoles<IdentityRole<IdentityId>>()
 .AddEntityFrameworkStores<InkboardDbContext>()
 .AddDefaultTokenProviders();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+
 
 
 builder.Services.AddApplication().AddInfraestructure().AddPersistence(builder.Configuration);
@@ -45,6 +48,8 @@ builder.Services.AddControllers().AddJsonOptions(x =>
 builder.Services.AddControllers().AddJsonOptions(opt => opt.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull);
 
 
+builder.Services.AddProblemDetails();
+
 
 var app = builder.Build();
 
@@ -58,6 +63,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+
 app.UseAuthentication();
 
 app.UseAuthorization();
@@ -65,5 +71,11 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.UseHttpsRedirection();
+app.UseExceptionHandler();
+
+
+
+app.UseStatusCodePages();
+
 
 app.Run();

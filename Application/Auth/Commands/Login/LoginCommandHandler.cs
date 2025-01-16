@@ -19,15 +19,15 @@ namespace Application.Auth.Commands
             _jwtProvider = jwtProvider;
         }
 
-        public async Task<Result<string>> Handle(LoginCommand request, CancellationToken cancellationToken)
+        public async Task<string> Handle(LoginCommand request, CancellationToken cancellationToken)
         {
             Usuario? usuario = await _userManager.FindByNameAsync(request.Username);
 
-            if(usuario is null ) return UsuariosFailures.CredencialesInvalidas;
+            if(usuario is null ) throw AuthExceptions.CreedencialesInvalidas;
 
             PasswordHasher<Usuario> hasher = new  PasswordHasher<Usuario>();
 
-            if(hasher.VerifyHashedPassword(usuario, usuario.PasswordHash!, request.Password) == PasswordVerificationResult.Success) return UsuariosFailures.CredencialesInvalidas;
+            if(hasher.VerifyHashedPassword(usuario, usuario.PasswordHash!, request.Password) == PasswordVerificationResult.Success) throw AuthExceptions.CreedencialesInvalidas;
                 
             return  await _jwtProvider.Generar(usuario);
         }

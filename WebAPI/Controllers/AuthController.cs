@@ -16,11 +16,17 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<dynamic> Login(string username, string password){
+        public async Task<string> Login([FromBody] LoginRequest request){
            return await this._sender.Send(new LoginCommand(){
-            Username = username,
-            Password = password
+            Username = request.Username,
+            Password = request.Password
            });
         }
+    }
+
+    public class LoginRequest
+    {
+        public string Username { get; set; }
+        public string Password { get; set; }
     }
 }
