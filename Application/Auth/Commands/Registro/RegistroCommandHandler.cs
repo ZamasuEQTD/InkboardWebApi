@@ -30,13 +30,12 @@ namespace Application.Auth.Commands.Registro
         
             if(StringUtils.ContieneEspaciosEnBlanco(request.Password)) throw   AuthExceptions.PasswordContineneEspacios;
 
-
             Usuario? usuario = await  _userManager.FindByNameAsync(request.Username);
             
             if (usuario is not null) throw AuthExceptions.UsernameOcupado;
 
             PasswordHasher<Usuario> hasher = new PasswordHasher<Usuario>();
-            
+
             usuario = new Usuario (){
                 Id = new IdentityId(Guid.NewGuid()),
                 UserName = request.Username
