@@ -1,3 +1,4 @@
+using Domain.Core;
 using Domain.Core.Abstractions;
 using Domain.Hilos.Models.Enums;
 using Domain.Hilos.Models.ValueObject;
@@ -15,5 +16,11 @@ namespace Domain.Hilos.Models
         public string Titulo {get; private set;}
         public string Descripcion {get;private set;}
         public bool RecibirNotificaciones { get; private set; }
+
+        public void Eliminar() {
+            if(Status == HiloStatus.Eliminado) throw new DomainBusinessException("Hilo ya eliminado");
+
+            this.Status = HiloStatus.Eliminado;
+        }
     }
 }
