@@ -43,6 +43,19 @@ namespace Infraestructure.Persistence.Configurations
                 y.HasOne<Usuario>().WithMany().HasForeignKey(h => h.DenuncianteId);
             });
 
+            builder.OwnsMany(h => h.Interacciones, y =>
+            {
+                y.ToTable("HiloInteraccion");
+
+                y.HasKey(r => r.Id);
+                
+                y.Property(h => h.Id).HasConversion(id => id.Value, value => new(value));
+
+                y.WithOwner().HasForeignKey(r => r.HiloId);
+
+                y.HasOne<Usuario>().WithMany().HasForeignKey(r => r.UsuarioId);
+            });
+
             builder.HasOne<Usuario>().WithMany().HasForeignKey(h=> h.AutorId);
             
         }    

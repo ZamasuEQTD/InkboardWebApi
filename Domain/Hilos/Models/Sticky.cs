@@ -14,6 +14,6 @@ namespace Domain.Hilos.Models
             this.Hilo = hilo;
         }
 
-        public Sticky(){}
+        private Sticky(){}
     }
 }
