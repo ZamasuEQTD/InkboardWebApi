@@ -19,6 +19,18 @@ namespace Infraestructure.Persistence.Configurations
                 }
             );
 
+            builder.OwnsOne(h => h.Sticky, y =>
+            {
+                y.ToTable("Sticky");
+                
+                y.HasKey(s => s.Id);
+                y.Property(h => h.Id).HasConversion(id => id.Value, value => new(value));
+
+                y.Property(c => c.Hilo);
+
+                y.WithOwner().HasForeignKey(s => s.Hilo);
+            });
+
             builder.HasOne<Usuario>().WithMany().HasForeignKey(h=> h.AutorId);
             
         }    
