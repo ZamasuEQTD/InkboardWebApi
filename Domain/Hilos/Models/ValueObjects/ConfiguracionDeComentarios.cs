@@ -1,5 +1,4 @@
-
-namespace Domain.Hilos.Models.ValueObject
+namespace Domain.Hilos.Models.ValueObjects
 {
     public class ConfiguracionDeComentarios
     {
