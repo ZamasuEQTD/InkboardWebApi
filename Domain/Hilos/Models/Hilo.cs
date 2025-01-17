@@ -1,5 +1,6 @@
 using Domain.Core;
 using Domain.Core.Abstractions;
+using Domain.Denuncias.Models;
 using Domain.Hilos.Models.Enums;
 using Domain.Hilos.Models.ValueObjects;
 using Domain.Usuarios.Models.ValueObjects;
@@ -22,6 +23,8 @@ namespace Domain.Hilos.Models
 
             if(TieneStickyActivo) EliminarSticky(); 
 
+            DesestimarDenuncias();
+
             this.Status = HiloStatus.Eliminado;
         }
     
@@ -29,6 +32,15 @@ namespace Domain.Hilos.Models
             if(!TieneStickyActivo) throw new DomainBusinessException("Sin sticky activo");
         
             this.Sticky = null;
+        }
+
+        private void DesestimarDenuncias(){
+            foreach (var denuncia in Denuncias)
+            {
+                if(!denuncia.EstaDesestimada){
+                    denuncia.Desestimar();
+                }
+            }
         }
 
         public bool TieneStickyActivo => this.Sticky is not null;
