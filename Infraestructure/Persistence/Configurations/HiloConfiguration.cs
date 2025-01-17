@@ -1,3 +1,4 @@
+using Domain.Categorias.Models;
 using Domain.Hilos.Models;
 using Domain.Usuarios.Models;
 using Microsoft.EntityFrameworkCore;
@@ -48,7 +49,7 @@ namespace Infraestructure.Persistence.Configurations
                 y.ToTable("HiloInteraccion");
 
                 y.HasKey(r => r.Id);
-                
+
                 y.Property(h => h.Id).HasConversion(id => id.Value, value => new(value));
 
                 y.WithOwner().HasForeignKey(r => r.HiloId);
@@ -57,6 +58,7 @@ namespace Infraestructure.Persistence.Configurations
             });
 
             builder.HasOne<Usuario>().WithMany().HasForeignKey(h=> h.AutorId);
+            builder.HasOne<Subcategoria>().WithMany().HasForeignKey(h=> h.SubcategoriaId);
             
         }    
      }    

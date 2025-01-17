@@ -1,3 +1,4 @@
+using Domain.Categorias.Models.ValueObjects;
 using Domain.Core;
 using Domain.Core.Abstractions;
 using Domain.Denuncias.Models;
@@ -12,13 +13,14 @@ namespace Domain.Hilos.Models
         public IdentityId AutorId {get; private set;}
         public Sticky? Sticky {get; private set;}
         public HiloStatus Status {get; private set;}
-        public ConfiguracionDeComentarios Configuracion {get; private set;}
         public DateTime UltimoBump { get; private set; }
         public string Titulo {get; private set;}
         public string Descripcion {get;private set;}
         public bool RecibirNotificaciones { get; private set; }
-        public ICollection<DenunciaHilo> Denuncias {get; private set;}
-        public ICollection<HiloInteraccion> Interacciones {get; private set;}
+        public ConfiguracionDeComentarios Configuracion {get; private set;}
+        public SubcategoriaId SubcategoriaId {get; private set;}
+        public ICollection<DenunciaHilo> Denuncias {get; private set;} = [];
+        public ICollection<HiloInteraccion> Interacciones {get; private set;} = [];
         public void Eliminar() {
             if(EstaEliminado) throw new DomainBusinessException("Hilo ya eliminado");
 
@@ -75,6 +77,10 @@ namespace Domain.Hilos.Models
             }
 
             interaccion.EjecutarAccion(accion);
+        }
+
+        public void CambiarSubcategoria (SubcategoriaId subcategoria){
+            this.SubcategoriaId = subcategoria;
         }
 
         public HiloInteraccion? GetInteraccionDeUsuario(IdentityId usuario) => this.Interacciones.FirstOrDefault(i => i.UsuarioId == usuario); 
