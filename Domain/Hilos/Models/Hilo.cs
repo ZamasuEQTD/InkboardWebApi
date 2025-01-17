@@ -2,6 +2,7 @@ using Domain.Categorias.Models.ValueObjects;
 using Domain.Core;
 using Domain.Core.Abstractions;
 using Domain.Denuncias.Models;
+using Domain.Encuestas.Models.ValueObjects;
 using Domain.Hilos.Models.Enums;
 using Domain.Hilos.Models.ValueObjects;
 using Domain.Usuarios.Models.ValueObjects;
@@ -19,6 +20,7 @@ namespace Domain.Hilos.Models
         public bool RecibirNotificaciones { get; private set; }
         public ConfiguracionDeComentarios Configuracion {get; private set;}
         public SubcategoriaId SubcategoriaId {get; private set;}
+        public EncuestaId EncuestaId {get; private set;}
         public ICollection<DenunciaHilo> Denuncias {get; private set;} = [];
         public ICollection<HiloInteraccion> Interacciones {get; private set;} = [];
         public void Eliminar() {

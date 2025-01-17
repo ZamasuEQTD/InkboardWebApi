@@ -1,4 +1,5 @@
 using Domain.Categorias.Models;
+using Domain.Encuestas;
 using Domain.Hilos.Models;
 using Domain.Usuarios.Models;
 using Microsoft.EntityFrameworkCore;
@@ -59,7 +60,7 @@ namespace Infraestructure.Persistence.Configurations
 
             builder.HasOne<Usuario>().WithMany().HasForeignKey(h=> h.AutorId);
             builder.HasOne<Subcategoria>().WithMany().HasForeignKey(h=> h.SubcategoriaId);
-            
+            builder.HasOne<Encuesta>().WithMany().HasForeignKey(h=> h.EncuestaId);
         }    
      }    
 }
