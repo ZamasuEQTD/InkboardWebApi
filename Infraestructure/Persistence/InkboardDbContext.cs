@@ -1,3 +1,4 @@
+using Domain.Baneos;
 using Domain.Categorias.Models;
 using Domain.Comentarios.Models;
 using Domain.Encuestas;
@@ -20,6 +21,7 @@ namespace Infraestructure.Persistence
         public DbSet<HashedMedia> Medias {get; set;}
         public DbSet<Subcategoria> Subcategorias {get; set;}
         public DbSet<Comentario> Comentarios {get; set;}
+        public DbSet<Baneo> Baneos {get; set;}
         public InkboardDbContext(DbContextOptions<InkboardDbContext> options) : base(options) {}
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
