@@ -6,6 +6,8 @@ using Infraestructure;
 using Infraestructure.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using WebApi.Extensions;
+using WebAPI;
 using WebAPI.Configuration;
 using WebAPI.Configuration.Setup;
 
@@ -18,7 +20,10 @@ builder.Services.AddIdentity<Usuario, IdentityRole<IdentityId>>()
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
-builder.Services.AddApplication().AddInfraestructure().AddPersistence(builder.Configuration);
+
+builder.Services.AddWebApi().AddApplication().AddInfraestructure().AddPersistence(builder.Configuration);
+
+builder.Services.AddSwaggerBearerTokenSupport();
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi

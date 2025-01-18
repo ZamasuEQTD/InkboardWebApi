@@ -11,15 +11,13 @@ namespace Application.Baneos.Commands.DesbanearUsuario
     public class DesbanearUsuarioCommandHandler : ICommandHandler<DesbanearUsuarioCommand>
     {
         private readonly IBaneosRepository _baneosRepository;
-        private readonly IUsuariosRepository _usuariosRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly UserManager<Usuario> _userManager;
         private readonly IDateTimeProvider _time;
 
-        public DesbanearUsuarioCommandHandler(IUnitOfWork unitOfWork, IUsuariosRepository usuariosRepository, IBaneosRepository baneosRepository, IDateTimeProvider time, UserManager<Usuario> userManager)
+        public DesbanearUsuarioCommandHandler(IUnitOfWork unitOfWork, IBaneosRepository baneosRepository, IDateTimeProvider time, UserManager<Usuario> userManager)
         {
             _unitOfWork = unitOfWork;
-            _usuariosRepository = usuariosRepository;
             _baneosRepository = baneosRepository;
             _time = time;
             _userManager = userManager;
@@ -27,7 +25,7 @@ namespace Application.Baneos.Commands.DesbanearUsuario
 
         public async Task Handle(DesbanearUsuarioCommand request, CancellationToken cancellationToken)
         {
-            Usuario? usuario = await _usuariosRepository.GetUsuarioById(new(request.Usuario));
+            Usuario? usuario = await _userManager.FindByIdAsync(request.Usuario.ToString());
 
             foreach (var baneo in await _baneosRepository.GetBaneos(usuario.Id))
             {

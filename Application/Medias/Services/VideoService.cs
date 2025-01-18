@@ -3,8 +3,8 @@ using Application.Medias.Abstractions.Providers;
 using Application.Medias.Abstractions.Services;
 using Domain.Media.Models;
 
-namespace Application.Medias.Services;
-
+namespace Application.Medias.Services {
+    
 public class VideoService : IFileService
 {
     private readonly MiniaturaService _miniaturaService;
@@ -30,6 +30,7 @@ public class VideoService : IFileService
             _url.Thumbnail + Path.GetFileName(miniatura),
             _url.Previsualizacion + Path.GetFileName(previsualizacion)
         );
+    }
     }
 
 

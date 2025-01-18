@@ -13,18 +13,14 @@ namespace Application.Baneos.Commands.BanearUsuario
     public class BanearUsuarioCommandHandler : ICommandHandler<BanearUsuarioCommand>
     {
         private readonly IBaneosRepository _baneosRepository;
-        private readonly IUsuariosRepository _usuariosRepository;
         private readonly ICurrentUser _user;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IDateTimeProvider _timeProvider;
         private readonly UserManager<Usuario> _userManager;
-        public BanearUsuarioCommandHandler(IUnitOfWork unitOfWork, ICurrentUser context, IUsuariosRepository usuariosRepository, IBaneosRepository baneosRepository, IDateTimeProvider timeProvider, UserManager<Usuario> userManager)
+        public BanearUsuarioCommandHandler(IUnitOfWork unitOfWork, ICurrentUser context,   IBaneosRepository baneosRepository, IDateTimeProvider timeProvider, UserManager<Usuario> userManager)
         {
             _unitOfWork = unitOfWork;
             _user = context;
-            _usuariosRepository = usuariosRepository;
             _baneosRepository = baneosRepository;
-            _timeProvider = timeProvider;
             _userManager = userManager;
         }
 

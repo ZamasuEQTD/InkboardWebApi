@@ -82,6 +82,10 @@ namespace Infraestructure.Persistence
                     context.SaveChanges();
 
                 }
+
+                if(!context.Set<Categoria>().Any()){
+                    List<Categoria> categorias = [ new Categoria("Tecnologia", false, [new Subcategoria("Inteligencia Artificial", "IA")])];
+                }
             });
 
             base.OnConfiguring(optionsBuilder);
