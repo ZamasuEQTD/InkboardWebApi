@@ -1,6 +1,7 @@
 using Domain.Comentarios.Models;
 using Domain.Comentarios.Models.ValueObjects;
 using Domain.Hilos.Models;
+using Domain.Media.Models;
 using Domain.Usuarios.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -63,6 +64,8 @@ namespace Infraestructure.Persistence.Configurations
             builder.HasOne<Usuario>().WithMany().HasForeignKey(c => c.AutorId);
 
             builder.HasOne<Hilo>().WithMany(h=> h.Comentarios).HasForeignKey(c => c.HiloId);
+
+            builder.HasOne<MediaSpoileable>().WithOne().HasForeignKey<Comentario>(h => h.MediaId);
         }
     }
 

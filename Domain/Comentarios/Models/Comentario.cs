@@ -4,6 +4,7 @@ using Domain.Core;
 using Domain.Core.Abstractions;
 using Domain.Hilos.Models;
 using Domain.Hilos.Models.ValueObjects;
+using Domain.Media.Models.ValueObjects;
 using Domain.Usuarios.Models;
 using Domain.Usuarios.Models.ValueObjects;
 
@@ -20,6 +21,7 @@ namespace Domain.Comentarios.Models
         public Tag Tag { get; private set; }
         public Dados? Dados { get; private set; }
         public TagUnico? TagUnico { get; private set; }
+        public MediaSpoileableId? MediaId {get; private set;}
         public ICollection<DenunciaDeComentario> Denuncias { get; private set; } = [];
         public ICollection<ComentarioInterracion> Interaciones { get; private set; } = [];
         public ICollection<RespuestaComentario> Respuestas { get; private set; } = [];

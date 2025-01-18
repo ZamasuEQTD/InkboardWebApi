@@ -7,6 +7,7 @@ using Domain.Denuncias.Models;
 using Domain.Encuestas.Models.ValueObjects;
 using Domain.Hilos.Models.Enums;
 using Domain.Hilos.Models.ValueObjects;
+using Domain.Media.Models.ValueObjects;
 using Domain.Usuarios.Models.ValueObjects;
 
 namespace Domain.Hilos.Models
@@ -21,6 +22,7 @@ namespace Domain.Hilos.Models
         public string Descripcion {get;private set;}
         public bool RecibirNotificaciones { get; private set; }
         public ConfiguracionDeComentarios Configuracion {get; private set;}
+        public MediaSpoileableId PortadaId {get; private set;}
         public SubcategoriaId SubcategoriaId {get; private set;}
         public EncuestaId? EncuestaId {get; private set;}
         public ICollection<DenunciaHilo> Denuncias {get; private set;} = [];

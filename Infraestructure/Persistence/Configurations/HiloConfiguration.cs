@@ -2,6 +2,7 @@ using Domain.Categorias.Models;
 using Domain.Comentarios.Models;
 using Domain.Encuestas;
 using Domain.Hilos.Models;
+using Domain.Media.Models;
 using Domain.Usuarios.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -75,6 +76,7 @@ namespace Infraestructure.Persistence.Configurations
             builder.HasOne<Subcategoria>().WithMany().HasForeignKey(h=> h.SubcategoriaId);
             builder.HasOne<Encuesta>().WithOne().HasForeignKey<Hilo>(h => h.EncuestaId);
 
+            builder.HasOne<MediaSpoileable>().WithOne().HasForeignKey<Hilo>(h => h.PortadaId);
         }    
      }    
 }
