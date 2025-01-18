@@ -1,4 +1,5 @@
-using Application.Abstractions;
+
+using Application.Core.Abstractions;
 using Infraestructure.Authentication.Jwt;
 using Microsoft.Extensions.DependencyInjection;
 

@@ -1,12 +1,12 @@
-using Application.Abstractions;
-using Application.Abstractions.Messaging;
+using Application.Core.Abstractions.Messaging;
 using Application.Auth.Commands.Login;
 using Domain.Core;
 using Domain.Usuarios;
 using Domain.Usuarios.Models;
 using Microsoft.AspNetCore.Identity;
+using Application.Core.Abstractions;
 
-namespace Application.Auth.Commands
+namespace Application.Auth.Commands.Login
 {
     public class LoginCommandHandler : ICommandHandler<LoginCommand, string>
     {

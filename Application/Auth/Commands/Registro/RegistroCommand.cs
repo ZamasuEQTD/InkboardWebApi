@@ -1,4 +1,4 @@
-using Application.Abstractions.Messaging;
+using Application.Core.Abstractions.Messaging;
 
 namespace Application.Auth.Commands.Registro
 {

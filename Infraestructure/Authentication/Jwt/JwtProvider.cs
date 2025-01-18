@@ -1,12 +1,12 @@
 using Microsoft.Extensions.Options;
 using System.Security.Claims;
 using System.Text;
-using Application.Abstractions;
-using Microsoft.AspNetCore.Identity;
-using System.Text.Json;
-using Domain.Usuarios.Models;
-using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using Application.Core.Abstractions;
+using Microsoft.AspNetCore.Identity;
+using Domain.Usuarios.Models;
+using System.Text.Json;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Infraestructure.Authentication.Jwt
 {

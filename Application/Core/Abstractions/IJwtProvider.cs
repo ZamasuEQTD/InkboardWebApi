@@ -2,7 +2,7 @@ using Domain.Usuarios;
 using Domain.Usuarios.Models;
 using Microsoft.AspNetCore.Identity;
 
-namespace Application.Abstractions
+namespace Application.Core.Abstractions
 {
     public interface IJwtProvider
     {
