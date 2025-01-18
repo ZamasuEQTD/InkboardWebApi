@@ -31,7 +31,6 @@ namespace Domain.Hilos.Models
         public ICollection<ComentarioDestacado> ComentariosDestacados {get; private set;} = [];
 
         public Hilo(
-            HiloId id,
             IdentityId autorId,
             string titulo,
             string descripcion,
@@ -40,8 +39,9 @@ namespace Domain.Hilos.Models
             EncuestaId? encuestaId,
             ConfiguracionDeComentarios configuracion
             )
-            : base(id)
+            : base()
         {
+            Id = new HiloId(Guid.NewGuid());
             AutorId = autorId;
             Titulo = titulo;
             Descripcion = descripcion;
