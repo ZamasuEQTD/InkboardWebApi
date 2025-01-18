@@ -26,6 +26,32 @@ namespace Domain.Comentarios.Models
         public ICollection<ComentarioInterracion> Interaciones { get; private set; } = [];
         public ICollection<RespuestaComentario> Respuestas { get; private set; } = [];
 
+        public Comentario(
+            ComentarioId id,
+            HiloId hiloId,
+            IdentityId autorId,
+            Color color,
+            Texto texto,
+            Tag tag,
+            MediaSpoileableId? mediaId = null,
+            Dados? dados = null,
+            TagUnico? tagUnico = null)
+            : base(id)
+        {
+            HiloId = hiloId;
+            AutorId = autorId;
+            Color = color;
+            Texto = texto;
+            Tag = tag;
+            RecibirNotificaciones = true;
+            MediaId = mediaId;
+            Dados = dados;
+            TagUnico = tagUnico;
+            Status = ComentariosStatus.Activo;
+        }
+
+        private Comentario() {}
+
         public void Eliminar(Hilo hilo){
             if(hilo.EstaEliminado) throw new DomainBusinessException("El hilo esta eliminado");
 

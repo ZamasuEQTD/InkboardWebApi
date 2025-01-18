@@ -29,7 +29,32 @@ namespace Domain.Hilos.Models
         public ICollection<HiloInteraccion> Interacciones {get; private set;} = [];
         public ICollection<Comentario> Comentarios {get; private set;} = [];
         public ICollection<ComentarioDestacado> ComentariosDestacados {get; private set;} = [];
-        
+
+        public Hilo(
+            HiloId id,
+            IdentityId autorId,
+            string titulo,
+            string descripcion,
+            SubcategoriaId subcategoriaId,
+            MediaSpoileableId portadaId,
+            EncuestaId? encuestaId,
+            ConfiguracionDeComentarios configuracion
+            )
+            : base(id)
+        {
+            AutorId = autorId;
+            Titulo = titulo;
+            Descripcion = descripcion;
+            SubcategoriaId = subcategoriaId;
+            PortadaId = portadaId;
+            Configuracion = configuracion;
+            RecibirNotificaciones = true;
+            Status = HiloStatus.Activo;
+            UltimoBump = DateTime.UtcNow;
+            EncuestaId = encuestaId;
+        }
+
+        private Hilo(){}
 
         public void DestacarComentario(IdentityId usuario, Comentario comentario){
             if(!EstaActivo) throw new DomainBusinessException("Solo puedas destacar en hilos activos");
