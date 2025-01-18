@@ -1,6 +1,8 @@
 
 using Application.Core.Abstractions;
+using Infraestructure.Authentication;
 using Infraestructure.Authentication.Jwt;
+using Infraestructure.Persistence;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Infraestructure
@@ -11,6 +13,8 @@ namespace Infraestructure
         {
             services.AddScoped<IJwtProvider, JwtProvider>();
             
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<ICurrentUser, CurrentUser>();
             return services;
         }
 
