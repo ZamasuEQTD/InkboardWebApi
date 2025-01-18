@@ -1,4 +1,5 @@
 using Domain.Categorias.Models.ValueObjects;
+using Domain.Comentarios.Models;
 using Domain.Core;
 using Domain.Core.Abstractions;
 using Domain.Denuncias.Models;
@@ -20,9 +21,12 @@ namespace Domain.Hilos.Models
         public bool RecibirNotificaciones { get; private set; }
         public ConfiguracionDeComentarios Configuracion {get; private set;}
         public SubcategoriaId SubcategoriaId {get; private set;}
-        public EncuestaId EncuestaId {get; private set;}
+        public EncuestaId? EncuestaId {get; private set;}
         public ICollection<DenunciaHilo> Denuncias {get; private set;} = [];
         public ICollection<HiloInteraccion> Interacciones {get; private set;} = [];
+        public ICollection<Comentario> Comentarios {get; private set;} = [];
+        public ICollection<ComentarioDestacado> ComentariosDestacados {get; private set;} = [];
+        
         public void Eliminar() {
             if(EstaEliminado) throw new DomainBusinessException("Hilo ya eliminado");
 

@@ -1,4 +1,5 @@
 using Domain.Categorias.Models;
+using Domain.Comentarios.Models;
 using Domain.Encuestas;
 using Domain.Hilos.Models;
 using Domain.Usuarios.Models;
@@ -58,9 +59,22 @@ namespace Infraestructure.Persistence.Configurations
                 y.HasOne<Usuario>().WithMany().HasForeignKey(r => r.UsuarioId);
             });
 
+                 builder.OwnsMany(h => h.ComentariosDestacados, y =>
+                {
+                    y.ToTable("ComentarioDestacado");
+
+                    y.HasKey(c => c.Id);
+                    y.Property(h => h.Id).HasConversion(id => id.Value, value => new(value));
+
+                    y.WithOwner().HasForeignKey(c => c.HiloId);
+
+                    y.HasOne<Comentario>().WithMany().HasForeignKey(c => c.ComentarioId);
+                });
+
             builder.HasOne<Usuario>().WithMany().HasForeignKey(h=> h.AutorId);
             builder.HasOne<Subcategoria>().WithMany().HasForeignKey(h=> h.SubcategoriaId);
-            builder.HasOne<Encuesta>().WithMany().HasForeignKey(h=> h.EncuestaId);
+            builder.HasOne<Encuesta>().WithOne().HasForeignKey<Hilo>(h => h.EncuestaId);
+
         }    
      }    
 }
