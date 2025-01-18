@@ -13,6 +13,6 @@ namespace Domain.Comentarios.Models
             RespondidoId = respondido;
             RespuestaId = respuesta;
         }
-        public RespuestaComentario() { }
+        private RespuestaComentario() { }
     }
 }

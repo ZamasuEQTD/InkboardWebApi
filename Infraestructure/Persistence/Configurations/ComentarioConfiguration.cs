@@ -50,7 +50,7 @@ namespace Infraestructure.Persistence.Configurations
                 y.Property(h => h.Status);
             });
 
-            builder.OwnsMany(c => c.Relaciones, y =>
+            builder.OwnsMany(c => c.Interaciones, y =>
             {
                 y.HasKey(c => c.Id);
                 y.Property(c => c.Id).HasConversion(id => id.Value, value => new(value));

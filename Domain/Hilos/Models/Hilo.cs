@@ -1,5 +1,6 @@
 using Domain.Categorias.Models.ValueObjects;
 using Domain.Comentarios.Models;
+using Domain.Comentarios.Models.ValueObjects;
 using Domain.Core;
 using Domain.Core.Abstractions;
 using Domain.Denuncias.Models;
@@ -26,6 +27,27 @@ namespace Domain.Hilos.Models
         public ICollection<HiloInteraccion> Interacciones {get; private set;} = [];
         public ICollection<Comentario> Comentarios {get; private set;} = [];
         public ICollection<ComentarioDestacado> ComentariosDestacados {get; private set;} = [];
+        
+
+        public void DestacarComentario(IdentityId usuario, Comentario comentario){
+            if(!EstaActivo) throw new DomainBusinessException("Solo puedas destacar en hilos activos");
+
+            if(comentario.EstaEliminado) throw new DomainBusinessException("Comentario Eliminado");
+
+            if(!EsAutor(usuario)) throw new DomainBusinessException("Solamente el autor puede realizar esta accion");
+        
+            if(ComentarioEstaDestacado(comentario.Id)) {
+                this.ComentariosDestacados = [.. ComentariosDestacados.Where(c => c.Id == comentario.Id)];
+                
+                return;
+            }
+
+            if(HaAlcandoMaximaCantidadDeDestacados) throw new DomainBusinessException("Haz alcanzado la maxima cantidad de comentarios destacados");
+
+
+            this.ComentariosDestacados.Add(new ComentarioDestacado(comentario.Id,Id));
+        }
+
         
         public void Eliminar() {
             if(EstaEliminado) throw new DomainBusinessException("Hilo ya eliminado");
@@ -90,9 +112,13 @@ namespace Domain.Hilos.Models
         }
 
         public HiloInteraccion? GetInteraccionDeUsuario(IdentityId usuario) => this.Interacciones.FirstOrDefault(i => i.UsuarioId == usuario); 
+
+        bool HaAlcandoMaximaCantidadDeDestacados => ComentariosDestacados.Count == 5;
         public bool TieneStickyActivo => this.Sticky is not null;
         public bool EstaEliminado => this.Status == HiloStatus.Eliminado;
         public bool EstaActivo => this.Status == HiloStatus.Activo;
+        public bool ComentarioEstaDestacado(ComentarioId comentarioId) => this.ComentariosDestacados.Any(d=> d.ComentarioId == comentarioId);
+        public bool EsAutor(IdentityId usuarioId) => this.AutorId == usuarioId; 
         public bool HaDenunciado(IdentityId usuarioId) => Denuncias.Any(d => d.DenuncianteId == usuarioId);
     }
 }
