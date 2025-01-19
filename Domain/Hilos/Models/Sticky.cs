@@ -6,12 +6,12 @@ namespace Domain.Hilos.Models
 {
     public class Sticky : Entity<StickyId>
     {
-        public HiloId Hilo { get; private set; }
+        public HiloId HiloId { get; private set; }
 
         public Sticky(HiloId hilo )
         {
             this.Id = new(Guid.NewGuid());
-            this.Hilo = hilo;
+            this.HiloId = hilo;
         }
 
         private Sticky(){}

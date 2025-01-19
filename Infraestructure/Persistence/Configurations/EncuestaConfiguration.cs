@@ -14,6 +14,8 @@ namespace Infraestructure.Persistence.Configurations
 
             builder.OwnsMany(e => e.Respuestas, y =>
             {
+
+                y.ToTable("respuestas");
                 y.HasKey(r => r.Id);
                 y.Property(r => r.Id).HasConversion(id => id.Value, value => new(value));
 
@@ -22,6 +24,8 @@ namespace Infraestructure.Persistence.Configurations
 
             builder.OwnsMany(e => e.Votos, y =>
             {
+
+                y.ToTable("votos");
                 y.HasKey(r => r.Id);
                 y.Property(r => r.Id).HasConversion(id => id.Value, value => new(value));
 

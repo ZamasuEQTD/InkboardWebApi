@@ -14,7 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Infraestructure.Persistence
 {
-    public class InkboardDbContext : IdentityDbContext<Usuario, IdentityRole<IdentityId>, IdentityId> {
+    public class InkboardDbContext : IdentityDbContext<Usuario, IdentityRole<IdentityId>, IdentityId>{
         public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<Categoria> Categorias {get;set;}
         public DbSet<Encuesta> Encuestas {get; set;}

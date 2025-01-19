@@ -14,7 +14,6 @@ namespace Infraestructure.Persistence
                 options.EnableSensitiveDataLogging();
             });
 
-
             return services;
         }
 

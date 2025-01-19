@@ -6,8 +6,7 @@ namespace Application.Encuestas.Queries.Responses
     {
         public Guid Id { get; set; }
         public List<GetEncuestaRespuestaResponse> Respuestas { get; set; } = [];
-        [JsonPropertyName("respuesta_votada")]
-        public Guid? RespuestaVotada { get; set; }
+        public Guid? Respuesta_votada { get; set; }
     }
     
     public class GetEncuestaRespuestaResponse

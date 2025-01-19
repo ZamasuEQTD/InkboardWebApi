@@ -30,9 +30,7 @@ namespace Infraestructure.Persistence.Configurations
                 y.HasKey(s => s.Id);
                 y.Property(h => h.Id).HasConversion(id => id.Value, value => new(value));
 
-                y.Property(c => c.Hilo);
-
-                y.WithOwner().HasForeignKey(s => s.Hilo);
+                y.WithOwner().HasForeignKey(s => s.HiloId);
             });
 
             builder.OwnsMany(h => h.Denuncias, y =>

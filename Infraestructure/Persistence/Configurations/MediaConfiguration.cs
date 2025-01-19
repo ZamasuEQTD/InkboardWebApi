@@ -10,6 +10,8 @@ namespace Persistence.Configurations
     {
         public void Configure(EntityTypeBuilder<MediaSpoileable> builder)
         {
+
+            builder.ToTable("medias_spoileables");
             builder.HasKey(e => e.Id);
             builder.Property(e => e.Id).HasConversion(id => id.Value, value => new(value)) ;
 
