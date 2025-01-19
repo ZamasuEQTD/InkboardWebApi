@@ -2,6 +2,7 @@ using Application.Core.Abstractions;
 using Application.Core.Abstractions.Messaging;
 using Application.Core.Exceptions;
 using Domain.Comentarios;
+using Domain.Core;
 using Domain.Core.Abstractions;
 using Domain.Hilos;
 using Domain.Hilos.Models;
@@ -21,17 +22,19 @@ namespace Application.Hilos.Commands.EliminarHilo
             _timeProvider = timeProvider;
         }
 
-        public async  Task Handle(EliminarHiloCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(EliminarHiloCommand request, CancellationToken cancellationToken)
         {
             Hilo? hilo = await _hilosRepository.GetHiloById(new(request.Hilo));
 
-            if (hilo is null) throw  new InvalidCommandException("Hilo no encontrado");
+            if (hilo is null) return HiloErrors.NoEncontrado;
 
-            hilo.Eliminar();
+            var result = hilo.Eliminar();
 
+            if(result.IsFailure) return result.Error;
 
             await _unitOfWork.SaveChangesAsync();
 
+            return Result.Success();
         }
     }
 }

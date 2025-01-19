@@ -16,11 +16,7 @@ namespace Infraestructure.Persistence.Configurations
             builder.Property(c => c.Id).HasConversion(id => id.Value, value => new(value));
 
 
-            builder.Property(c => c.Texto).HasConversion(text => text.Value, value => Texto.Create(value));
-
-            builder.Property(c => c.Tag).HasConversion(tag => tag.Value, value => Tag.Create(value)) ;
-            builder.Property(c => c.TagUnico).HasConversion(tagUnico => tagUnico.Value, value => TagUnico.Create(value)) ;
-            builder.Property(c => c.Dados).HasConversion(dados => dados.Value, value => Dados.Create(value));
+            builder.Property(c => c.Texto).HasConversion(text => text.Value, value => Texto.Create(value).Value);
 
 
             builder.OwnsOne(c => c.Color, b =>

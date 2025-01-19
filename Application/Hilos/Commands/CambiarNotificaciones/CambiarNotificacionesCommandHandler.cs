@@ -2,6 +2,7 @@ using Application.Core.Abstractions;
 using Application.Core.Abstractions.Messaging;
 using Application.Core.Exceptions;
 using Domain.Comentarios;
+using Domain.Core;
 using Domain.Hilos;
 using Domain.Hilos.Models;
 
@@ -19,15 +20,19 @@ public class CambiarNotificacionesHiloCommandHandler : ICommandHandler<CambiarNo
         _user = user;
     }
 
-    public  async Task Handle(CambiarNotificacionesHiloCommand request, CancellationToken cancellationToken)
+    public  async Task<Result> Handle(CambiarNotificacionesHiloCommand request, CancellationToken cancellationToken)
     {
         Hilo? hilo = await  _repository.GetHiloById(new(request.HiloId));
 
-        if(hilo is null ) throw new InvalidCommandException("Hilo no encontrado");
+        if(hilo is null ) return HiloErrors.NoEncontrado;
 
-        hilo.CambiarNotificaciones(new (_user.UsuarioId));
+        var result = hilo.CambiarNotificaciones(new (_user.UsuarioId));
+
+        if(result.IsFailure) return result.Error;
 
         await _unitOfWork.SaveChangesAsync();
+
+        return Result.Success();
     }
     }
 }

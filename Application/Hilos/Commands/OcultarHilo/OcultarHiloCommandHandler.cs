@@ -5,6 +5,7 @@ using Domain.Hilos;
 using Domain.Hilos.Models;
 using Domain.Hilos.Models.ValueObjects;
 using Domain.Usuarios.Models.ValueObjects;
+using Domain.Core;
 
 namespace Application.Hilos.Commands.OcultarHilo {
     
@@ -19,15 +20,19 @@ public class OcultarHiloCommandHandler : ICommandHandler<OcultarHiloCommand>
         _unitOfWork = unitOfWork;
         _user = user;   
     }
-    public async Task Handle(OcultarHiloCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(OcultarHiloCommand request, CancellationToken cancellationToken)
     {
         Hilo? hilo = await _hilosRepository.GetHiloById(new HiloId(request.Hilo));
 
-        if (hilo is null) throw new InvalidCommandException("Hilo no encontrado");
+        if (hilo is null) return HiloErrors.NoEncontrado;
 
-        hilo.RealizarInteraccion(HiloInteraccion.Acciones.Ocultar,new IdentityId(_user.UsuarioId));
+        var result = hilo.RealizarInteraccion(HiloInteraccion.Acciones.Ocultar, new IdentityId(_user.UsuarioId));
+        
+        if (result.IsFailure) return result;
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        return Result.Success();
     }
 }
 }

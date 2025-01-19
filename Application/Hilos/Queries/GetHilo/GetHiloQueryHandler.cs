@@ -4,6 +4,7 @@ using Application.Core.Exceptions;
 using Application.Encuestas.Queries.Responses;
 using Dapper;
 using Domain.Comentarios;
+using Domain.Core;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Hilos.Queries.GetHilo;
@@ -19,7 +20,7 @@ public class GetHiloQueryHandler : IQueryHandler<GetHiloQuery, GetHiloResponse>
         _connection = connection;
     }
 
-    public async Task<GetHiloResponse> Handle(GetHiloQuery request, CancellationToken cancellationToken)
+    public async Task<Result<GetHiloResponse>> Handle(GetHiloQuery request, CancellationToken cancellationToken)
     {
         var sql =  @"
             SELECT

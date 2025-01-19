@@ -1,6 +1,7 @@
 using Application.Core.Abstractions;
 using Application.Core.Abstractions.Messaging;
 using Domain.Baneos;
+using Domain.Core;
 using Domain.Core.Abstractions;
 using Domain.Usuarios;
 using Domain.Usuarios.Models;
@@ -23,7 +24,7 @@ namespace Application.Baneos.Commands.DesbanearUsuario
             _userManager = userManager;
         }
 
-        public async Task Handle(DesbanearUsuarioCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(DesbanearUsuarioCommand request, CancellationToken cancellationToken)
         {
             Usuario? usuario = await _userManager.FindByIdAsync(request.Usuario.ToString());
 
@@ -33,6 +34,8 @@ namespace Application.Baneos.Commands.DesbanearUsuario
             }
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
+        
+            return Result.Success();
         }
     }
 }

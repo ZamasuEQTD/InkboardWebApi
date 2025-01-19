@@ -22,15 +22,19 @@ namespace Application.Hilos.Commands.DenunciarHilo
             _hilosRepository = hilosRepository;
         }
 
-        public async Task Handle(DenunciarHiloCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(DenunciarHiloCommand request, CancellationToken cancellationToken)
         {
             Hilo? hilo = await _hilosRepository.GetHiloById(new(request.Hilo));
 
-            if (hilo is null) throw new DomainBusinessException("Hilo no encontrado");
+            if (hilo is null) return HiloErrors.NoEncontrado;
 
-            hilo.Denunciar(new IdentityId(_user.UsuarioId));
+            var result =hilo.Denunciar(new IdentityId(_user.UsuarioId));
+
+            if(result.IsFailure) return result.Error;
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            return Result.Success();
         }
     }
 }

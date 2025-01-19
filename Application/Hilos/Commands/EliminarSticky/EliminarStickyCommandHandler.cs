@@ -8,7 +8,6 @@ using Domain.Hilos.Models.ValueObjects;
 
 namespace Application.Hilos.Commands.EliminarSticky
 {
-
     public class EliminarStickyCommandHandler : ICommandHandler<EliminarStickyCommand>
     {
         private readonly IHilosRepository _hilosRepository;
@@ -22,18 +21,19 @@ namespace Application.Hilos.Commands.EliminarSticky
             _hilosRepository = hilosRepository;
         }
 
-        public async Task Handle(EliminarStickyCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(EliminarStickyCommand request, CancellationToken cancellationToken)
         {
             Hilo? hilo = await _hilosRepository.GetHiloById(new HiloId(request.Hilo));
 
-            if (hilo is null) throw new DomainBusinessException("Hilo no encontrado");
+            if (hilo is null) return Result.Failure(HiloErrors.NoEncontrado);
 
-            hilo.EliminarSticky();
-
+            var result = hilo.EliminarSticky();
+            
+            if (result.IsFailure) return result;
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
+            return Result.Success();
         }
     }
-
 }

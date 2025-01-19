@@ -23,18 +23,19 @@ namespace Domain.Encuestas
             this.Votos = [];
         }
 
-        public void Votar(IdentityId usuarioId, RespuestaId respuestaId)
+        public Result Votar(IdentityId usuarioId, RespuestaId respuestaId)
         {
-            if (!ContieneRespuesta(respuestaId)) throw new  DomainBusinessException("Repuesta inexistente");
+            if (!ContieneRespuesta(respuestaId)) return Result.Failure(EncuestaErrors.RespuestaInexistente);
 
-            if (HaVotado(usuarioId)) throw new DomainBusinessException("Ya has votado esta encuesta");
+            if (HaVotado(usuarioId)) return Result.Failure(EncuestaErrors.YaVotado);
 
             Votos.Add(new Voto(
                 usuarioId,
                 respuestaId
             ));
-        }
 
+            return Result.Success();
+        }
 
         static public Encuesta Create(
             List<string> respuestas
@@ -51,8 +52,12 @@ namespace Domain.Encuestas
                 _respuestas
             );
         }
-
     }
 
-
+    public static class EncuestaErrors
+    {
+        public static readonly Error EncuestaNoEncontrada = new("RespuestaInexistente", "La respuesta no existe.");
+        public static readonly Error RespuestaInexistente = new("RespuestaInexistente", "La respuesta no existe.");
+        public static readonly Error YaVotado = new("YaVotado", "Ya has votado en esta encuesta.");
+    }
 }

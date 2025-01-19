@@ -2,6 +2,7 @@ using Application.Core.Abstractions;
 using Application.Core.Abstractions.Messaging;
 using Application.Core.Exceptions;
 using Domain.Comentarios;
+using Domain.Core;
 using Domain.Hilos;
 using Domain.Hilos.Models;
 
@@ -18,16 +19,19 @@ namespace Application.Hilos.Commands.EstablecerSticky
             _hilosRepository = hilosRepository;
         }
 
-        public async Task Handle(EstablecerStickyCommand request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(EstablecerStickyCommand request, CancellationToken cancellationToken)
         {
             Hilo? hilo = await _hilosRepository.GetHiloById(new(request.Hilo));
 
-            if (hilo is null) throw new InvalidCommandException("Hilo no encontrado");
+            if (hilo is null) return  HiloErrors.NoEncontrado;
 
-            hilo.EstablecerSticky();
+            var result = hilo.EstablecerSticky();
+            
+            if (result.IsFailure) return result;
 
-            await _unitOfWork.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
+            return Result.Success();
         }
     }
 }

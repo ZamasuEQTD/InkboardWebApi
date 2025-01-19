@@ -3,6 +3,7 @@ using Application.Core.Abstractions.Messaging;
 using Application.Core.Exceptions;
 using Domain.Baneos;
 using Domain.Baneos.Models.Enums;
+using Domain.Core;
 using Domain.Core.Abstractions;
 using Domain.Usuarios;
 using Domain.Usuarios.Models;
@@ -16,7 +17,7 @@ namespace Application.Baneos.Commands.BanearUsuario
         private readonly ICurrentUser _user;
         private readonly IUnitOfWork _unitOfWork;
         private readonly UserManager<Usuario> _userManager;
-        public BanearUsuarioCommandHandler(IUnitOfWork unitOfWork, ICurrentUser context,   IBaneosRepository baneosRepository, IDateTimeProvider timeProvider, UserManager<Usuario> userManager)
+        public BanearUsuarioCommandHandler(IUnitOfWork unitOfWork, ICurrentUser context,   IBaneosRepository baneosRepository, UserManager<Usuario> userManager)
         {
             _unitOfWork = unitOfWork;
             _user = context;
@@ -24,11 +25,11 @@ namespace Application.Baneos.Commands.BanearUsuario
             _userManager = userManager;
         }
 
-        public async Task  Handle(BanearUsuarioCommand request, CancellationToken cancellationToken)
+        public async Task<Result>  Handle(BanearUsuarioCommand request, CancellationToken cancellationToken)
         {
             Usuario? usuario = await _userManager.FindByIdAsync(request.UsuarioId.ToString());
 
-            if (usuario is null || (await _userManager.GetRolesAsync(usuario)).Any(r => r != "Anonimo")) throw new InvalidCommandException("Solamente puedes banear a usuarios anonimos");
+            if (usuario is null || (await _userManager.GetRolesAsync(usuario)).Any(r => r != "Anonimo"))  return BaneoErrors.NoEsAnonimo;
 
             DateTime? finalizacion = null;
 
@@ -45,6 +46,8 @@ namespace Application.Baneos.Commands.BanearUsuario
             _baneosRepository.Add(baneo);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            return Result.Success();
         }
     }
 

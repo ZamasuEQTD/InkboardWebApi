@@ -6,7 +6,9 @@ namespace Domain.Comentarios.Utils
 {
     public static class TagUtils
     {
-        static private readonly string REGEX_STRING = ">>" + Tag.REGEX_STRING;
+        static public readonly string TAG_REGEX_STRING = "[A-Z0-9]{8}";
+
+        static private readonly string REGEX_STRING = ">>" + TAG_REGEX_STRING;
 
         static public List<string> GetTags(string texto)
         {

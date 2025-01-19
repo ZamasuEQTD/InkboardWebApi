@@ -1,5 +1,7 @@
 using Application.Core.Abstractions;
 using Application.Core.Abstractions.Messaging;
+using Domain.Core;
+using Domain.Usuarios;
 using Domain.Usuarios.Models;
 using Domain.Usuarios.Models.ValueObjects;
 using Domain.Utils;
@@ -19,20 +21,20 @@ namespace Application.Auth.Commands.Registro
             _jwtProvider = jwtProvider;
         }
 
-        public async Task<string> Handle(RegistroCommand request, CancellationToken cancellationToken)
+        public async Task<Result<string>> Handle(RegistroCommand request, CancellationToken cancellationToken)
         {
             
-            if(request.Username.Length < 8 || request.Username.Length > 16)  throw AuthExceptions.UsernameLongitudInvalida;    
+            var username = Username.Create(request.Username);
 
-            if(StringUtils.ContieneEspaciosEnBlanco(request.Username)) throw AuthExceptions.UsernameContieneEspacios;
+            if(username.IsFailure) return username.Error;
 
-            if(request.Password.Length < 8 || request.Password.Length > 16) throw AuthExceptions.PasswordLongitudInvalida;
-        
-            if(StringUtils.ContieneEspaciosEnBlanco(request.Password)) throw   AuthExceptions.PasswordContineneEspacios;
+            var password = Password.Create(request.Password);
 
-            Usuario? usuario = await  _userManager.FindByNameAsync(request.Username);
+            if(password.IsFailure) return password.Error;
+
+            Usuario? usuario = await  _userManager.FindByNameAsync(username.Value.Value);
             
-            if (usuario is not null) throw AuthExceptions.UsernameOcupado;
+            if (usuario is not null) return UsuarioErrors.UsernameOcupado;
 
             PasswordHasher<Usuario> hasher = new PasswordHasher<Usuario>();
 

@@ -5,6 +5,7 @@ using Domain.Hilos;
 using Domain.Hilos.Models;
 using Domain.Hilos.Models.ValueObjects;
 using Domain.Usuarios.Models.ValueObjects;
+using Domain.Core;
 
 namespace Application.Hilos.Commands.PonerHiloEnFavorito;
 
@@ -19,16 +20,19 @@ public class PonerHiloEnFavoritoCommandHandler : ICommandHandler<PonerHiloEnFavo
         _unitOfWork = unitOfWork;
         _user = user;
     }
-    public async Task Handle(PonerHiloEnFavoritoCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(PonerHiloEnFavoritoCommand request, CancellationToken cancellationToken)
     {
         Hilo? hilo = await _hilosRepository.GetHiloById(new HiloId(request.Hilo));
 
-        if (hilo is null) throw new InvalidCommandException("Hilo no encontrado");
+        if (hilo is null) return HiloErrors.NoEncontrado;
 
-        hilo.RealizarInteraccion(HiloInteraccion.Acciones.Favorito,new IdentityId(_user.UsuarioId));
+        var result = hilo.RealizarInteraccion(HiloInteraccion.Acciones.Favorito, new IdentityId(_user.UsuarioId));
+        
+        if (result.IsFailure) return result;
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
+        return Result.Success();
     }
 
 }

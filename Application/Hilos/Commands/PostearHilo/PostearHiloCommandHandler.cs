@@ -4,6 +4,7 @@ using Application.Core.Exceptions;
 using Application.Medias.Abstractions.Providers;
 using Application.Medias.Services;
 using Domain.Categorias.Models.ValueObjects;
+using Domain.Core;
 using Domain.Encuestas;
 using Domain.Encuestas.Models.ValueObjects;
 using Domain.Hilos;
@@ -40,7 +41,7 @@ namespace Application.Hilos.Commands.PostearHilo
             _mediaProcesador = mediaProcesador;
         }
 
-        public async Task<Guid> Handle(PostearHiloCommand request, CancellationToken cancellationToken)
+        public async Task<Result<Guid>> Handle(PostearHiloCommand request, CancellationToken cancellationToken)
         {
             EncuestaId? encuestaId = null;
 
@@ -59,7 +60,7 @@ namespace Application.Hilos.Commands.PostearHilo
 
             if (request.File is not null)
             {
-                if (!ARCHIVOS_SOPORTADOS.Contains(request.File.Type)) throw new InvalidCommandException("Archivo no soportado para portada");
+                if (!ARCHIVOS_SOPORTADOS.Contains(request.File.Type)) return HiloErrors.ArchivoDePortadaInvalida;
 
                 media = await _mediaProcesador.Procesar(request.File);
 
@@ -69,13 +70,13 @@ namespace Application.Hilos.Commands.PostearHilo
             {
                media = await _embedProcesador.Procesar(request.Embed);
             }
-            else throw new InvalidCommandException("Sin portada");
+            else return HiloErrors.SinPortada;
 
             reference = new MediaSpoileable(media.Id, media, request.Spoiler);
 
             _mediasRepository.Add(reference);
 
-            Hilo hilo = new  Hilo(
+            Hilo hilo = new Hilo(
                 new IdentityId(_user.UsuarioId),
                 request.Titulo,
                 request.Descripcion,
@@ -92,7 +93,7 @@ namespace Application.Hilos.Commands.PostearHilo
 
             await _unitOfWork.SaveChangesAsync();
 
-            return hilo.Id.Value;
+            return Result.Success(hilo.Id.Value);
         }
     }
 }

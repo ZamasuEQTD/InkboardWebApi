@@ -49,8 +49,12 @@ namespace Tests.Domain.Hilos.Models
             );
             hilo.Eliminar();
 
-            // Act & Assert
-            Assert.Throws<DomainBusinessException>(() => hilo.Eliminar());
+            // Act
+            var result = hilo.Eliminar();
+
+            // Assert
+            Assert.True(result.IsFailure);
+            Assert.Equal(HiloErrors.HiloEliminado, result.Error);
         }
 
         [Fact]
@@ -112,8 +116,12 @@ namespace Tests.Domain.Hilos.Models
             );
             hilo.EstablecerSticky();
 
-            // Act & Assert
-            Assert.Throws<DomainBusinessException>(() => hilo.EstablecerSticky());
+            // Act
+            var result = hilo.EstablecerSticky();
+
+            // Assert
+            Assert.True(result.IsFailure);
+            Assert.Equal(HiloErrors.StickyActivo, result.Error);
         }
 
 
