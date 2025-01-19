@@ -1,9 +1,9 @@
 
 using Application.Core.Abstractions.Messaging;
 
-namespace Application.Hilos.Commands.SeguirHilo
+namespace Application.Hilos.Commands.DenunciarHilo
 {
-    public class SeguirHiloCommand : ICommand
+    public class DenunciarHiloCommand : ICommand
     {
         public Guid Hilo { get; set; }
     }

@@ -1,10 +1,11 @@
 
 using Application.Core.Abstractions.Messaging;
 
-namespace Application.Hilos.Commands.SeguirHilo
+namespace Application.Hilos.Commands.EliminarSticky
 {
-    public class SeguirHiloCommand : ICommand
+    public class EliminarStickyCommand : ICommand
     {
         public Guid Hilo { get; set; }
+
     }
 }

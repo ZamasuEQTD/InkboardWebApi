@@ -138,6 +138,12 @@ namespace Domain.Hilos.Models
             this.SubcategoriaId = subcategoria;
         }
 
+        public void CambiarNotificaciones(IdentityId usuario){
+            if(!EsAutor(usuario)) throw new DomainBusinessException("No eres el dueño del hilo");
+
+            this.RecibirNotificaciones = !this.RecibirNotificaciones;
+        }
+
         public HiloInteraccion? GetInteraccionDeUsuario(IdentityId usuario) => this.Interacciones.FirstOrDefault(i => i.UsuarioId == usuario); 
 
         bool HaAlcandoMaximaCantidadDeDestacados => ComentariosDestacados.Count == 5;

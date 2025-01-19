@@ -6,7 +6,7 @@ using Domain.Hilos.Models;
 using Domain.Hilos.Models.ValueObjects;
 using Domain.Usuarios.Models.ValueObjects;
 
-namespace Application.Hilos.Commands
+namespace Application.Hilos.Commands.SeguirHilo
 {
     public class SeguirHiloCommandHandler : ICommandHandler<SeguirHiloCommand>
     {
