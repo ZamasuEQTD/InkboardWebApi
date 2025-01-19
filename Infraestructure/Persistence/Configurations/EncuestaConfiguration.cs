@@ -17,7 +17,7 @@ namespace Infraestructure.Persistence.Configurations
                 y.HasKey(r => r.Id);
                 y.Property(r => r.Id).HasConversion(id => id.Value, value => new(value));
 
-                y.WithOwner().HasForeignKey("EncuestaId");
+                y.WithOwner().HasForeignKey("encuesta_id");
             });
 
             builder.OwnsMany(e => e.Votos, y =>

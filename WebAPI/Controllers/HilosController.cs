@@ -8,6 +8,7 @@ using Application.Hilos.Commands.OcultarHilo;
 using Application.Hilos.Commands.PonerHiloEnFavorito;
 using Application.Hilos.Commands.PostearHilo;
 using Application.Hilos.Commands.SeguirHilo;
+using Application.Hilos.Queries.GetHilo;
 using Infraestructure.Media;
 using Infraestructure.Services.Providers;
 using MediatR;
@@ -140,6 +141,18 @@ namespace WebApi.Controllers
             await sender.Send(new CambiarNotificacionesHiloCommand()
             {
                 HiloId = hilo
+            });
+
+            return Results.Ok();
+        }
+    
+    
+        [HttpGet("hilo/{hilo:guid}")]
+        public async Task<IResult> GetHilo(Guid hilo)
+        {
+            await sender.Send(new GetHiloQuery()
+            {
+                Hilo = hilo
             });
 
             return Results.Ok();

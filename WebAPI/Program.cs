@@ -20,7 +20,6 @@ builder.Services.AddIdentity<Usuario, IdentityRole<IdentityId>>()
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
-
 builder.Services.AddWebApi().AddApplication().AddInfraestructure().AddPersistence(builder.Configuration);
 
 builder.Services.AddSwaggerBearerTokenSupport();

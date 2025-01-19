@@ -18,14 +18,14 @@ namespace Infraestructure.Persistence.Configurations
         
             builder.OwnsOne(h => h.Configuracion, conf =>
                 {
-                    conf.Property(c => c.Dados).HasColumnName("Dados");
-                    conf.Property(c => c.IdUnicoActivado).HasColumnName("IdUnicoActivado");
+                    conf.Property(c => c.Dados).HasColumnName("dados");
+                    conf.Property(c => c.IdUnicoActivado).HasColumnName("id_unico_activado");
                 }
             );
 
             builder.OwnsOne(h => h.Sticky, y =>
             {
-                y.ToTable("Sticky");
+                y.ToTable("stickies");
                 
                 y.HasKey(s => s.Id);
                 y.Property(h => h.Id).HasConversion(id => id.Value, value => new(value));
@@ -37,7 +37,6 @@ namespace Infraestructure.Persistence.Configurations
 
             builder.OwnsMany(h => h.Denuncias, y =>
             {
-                y.ToTable("HiloDenuncia");
 
                 y.HasKey(h => h.Id);
                 y.Property(h => h.Id).HasConversion(id => id.Value, value => new(value));
@@ -49,8 +48,6 @@ namespace Infraestructure.Persistence.Configurations
 
             builder.OwnsMany(h => h.Interacciones, y =>
             {
-                y.ToTable("HiloInteraccion");
-
                 y.HasKey(r => r.Id);
 
                 y.Property(h => h.Id).HasConversion(id => id.Value, value => new(value));
@@ -60,17 +57,15 @@ namespace Infraestructure.Persistence.Configurations
                 y.HasOne<Usuario>().WithMany().HasForeignKey(r => r.UsuarioId);
             });
 
-                 builder.OwnsMany(h => h.ComentariosDestacados, y =>
-                {
-                    y.ToTable("ComentarioDestacado");
+            builder.OwnsMany(h => h.ComentariosDestacados, y =>
+            {
+                y.HasKey(c => c.Id);
+                y.Property(h => h.Id).HasConversion(id => id.Value, value => new(value));
 
-                    y.HasKey(c => c.Id);
-                    y.Property(h => h.Id).HasConversion(id => id.Value, value => new(value));
+                y.WithOwner().HasForeignKey(c => c.HiloId);
 
-                    y.WithOwner().HasForeignKey(c => c.HiloId);
-
-                    y.HasOne<Comentario>().WithMany().HasForeignKey(c => c.ComentarioId);
-                });
+                y.HasOne<Comentario>().WithMany().HasForeignKey(c => c.ComentarioId);
+            });
 
             builder.HasOne<Usuario>().WithMany().HasForeignKey(h=> h.AutorId);
             builder.HasOne<Subcategoria>().WithMany().HasForeignKey(h=> h.SubcategoriaId);

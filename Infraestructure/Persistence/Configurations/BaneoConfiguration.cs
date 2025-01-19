@@ -4,7 +4,7 @@ using Domain.Usuarios.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Persistence.Configurations
+namespace Infraestructure.Persistence.Configurations
 {
     public class BaneoConfiguration : IEntityTypeConfiguration<Baneo>
     {

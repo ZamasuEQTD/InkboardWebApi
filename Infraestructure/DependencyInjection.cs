@@ -27,6 +27,7 @@ namespace Infraestructure
         {
             services.AddScoped<IJwtProvider, JwtProvider>();
             
+            services.AddScoped<IDBConnectionFactory, NpgsqlConnectionFactory>();
 
             services.AddScoped<IVideoGifPrevisualizadorService, FfmpegVideoVistaPreviaService>();
             services.AddScoped<IFileStorageService, FileStorageService>();

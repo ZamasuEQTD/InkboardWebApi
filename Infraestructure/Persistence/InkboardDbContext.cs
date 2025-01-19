@@ -1,3 +1,4 @@
+using Application.Core.Abstractions;
 using Domain.Baneos;
 using Domain.Categorias.Models;
 using Domain.Comentarios.Models;
@@ -97,13 +98,13 @@ namespace Infraestructure.Persistence
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            base.OnModelCreating(builder);
+
             builder.Entity<Usuario>().Property(b => b.Id).HasConversion(id => id.Value, value => new(value)).HasColumnName("id");
             
             builder.Entity<IdentityRole<IdentityId>>().Property(b => b.Id).HasConversion(id => id.Value, value => new(value)).HasColumnName("id");
 
             builder.ApplyConfigurationsFromAssembly(typeof(InkboardDbContext).Assembly);
-            
-            base.OnModelCreating(builder);
         }
     }
 }
