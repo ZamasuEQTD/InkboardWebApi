@@ -14,7 +14,6 @@ namespace Infraestructure.Repositories
         {
             _context = context;
         }
-
         public void Add(Hilo hilo) => _context.Add(hilo);
         public Task<Hilo?> GetHiloById(HiloId id) => _context.Hilos.Include(h=> h.Comentarios).FirstOrDefaultAsync(h => h.Id == id);
     }

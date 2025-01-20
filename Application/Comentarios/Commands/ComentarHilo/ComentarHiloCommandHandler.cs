@@ -91,7 +91,7 @@ namespace Application.Comentarios.Commands.ComentarHilo {
                 texto.Value,
                 TagsService.GenerarTag(),
                 reference?.Id,
-                hilo.Configuracion.Dados? DadosService.Generar() : null,
+                hilo.Configuracion.DadosActivado? DadosService.Generar() : null,
                 hilo.Configuracion.IdUnicoActivado ? TagsService.GenerarTagUnico(
                     hilo.Id,
                     new IdentityId(_user.UsuarioId)

@@ -8,15 +8,14 @@ using Application.Hilos.Commands.OcultarHilo;
 using Application.Hilos.Commands.PonerHiloEnFavorito;
 using Application.Hilos.Commands.PostearHilo;
 using Application.Hilos.Commands.SeguirHilo;
-using Application.Hilos.Queries.GetHilo;
+using Application.Hilos.Queries.GetPortadas;
 using Infraestructure.Media;
 using Infraestructure.Services.Providers;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-
-namespace WebApi.Controllers
+namespace WebAPI.Controllers
 {
 
     [Route("api/hilos")]
@@ -147,15 +146,28 @@ namespace WebApi.Controllers
         }
     
     
-        [HttpGet("hilo/{hilo:guid}")]
-        public async Task<IResult> GetHilo(Guid hilo)
-        {
-            await sender.Send(new GetHiloQuery()
-            {
-                Hilo = hilo
-            });
+        // [HttpGet("hilo/{hilo:guid}")]
+        // public async Task<IResult> GetHilo(Guid hilo)
+        // {
+        //     await sender.Send(new GetHiloQuery()
+        //     {
+        //         Hilo = hilo
+        //     });
 
-            return Results.Ok();
+        //     return Results.Ok();
+        // }
+
+
+        [HttpGet()]
+        public async Task<IResult> Index([FromQuery] GetPortadasRequest request){
+            var result = await sender.Send(new GetPortadasQuery(){
+                Categoria = request.Categoria,
+                Titulo = request.Titulo,
+                UltimaPortada = request.UltimaPortada,
+                CategoriasBloqueadas = request.CategoriasBloqueadas 
+            });
+        
+            return result.ToResult();
         }
     }
     public class PostearHiloRequest
@@ -175,7 +187,7 @@ namespace WebApi.Controllers
     {
         public Guid? Categoria { get; set; }
         public string? Titulo { get; set; }
-        public DateTime UltimoBump { get; set; }
-        public List<Guid> CategoriasFiltradas { get; set; } = [];
-}
+        public Guid? UltimaPortada { get; set; }
+        public List<Guid> CategoriasBloqueadas { get; set; } = [];
+    }
 }

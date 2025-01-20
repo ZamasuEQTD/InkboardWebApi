@@ -19,7 +19,7 @@ namespace Infraestructure.Persistence.Configurations
         
             builder.OwnsOne(h => h.Configuracion, conf =>
                 {
-                    conf.Property(c => c.Dados).HasColumnName("dados");
+                    conf.Property(c => c.DadosActivado).HasColumnName("dados_activado");
                     conf.Property(c => c.IdUnicoActivado).HasColumnName("id_unico_activado");
                 }
             );
