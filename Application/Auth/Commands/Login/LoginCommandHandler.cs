@@ -23,11 +23,12 @@ namespace Application.Auth.Commands.Login
         {
             Usuario? usuario = await _userManager.FindByNameAsync(request.Username);
 
+
             if(usuario is null ) return UsuarioErrors.CredencialesInvalidas;
 
             PasswordHasher<Usuario> hasher = new  PasswordHasher<Usuario>();
 
-            if(hasher.VerifyHashedPassword(usuario, usuario.PasswordHash!, request.Password) == PasswordVerificationResult.Success) return UsuarioErrors.CredencialesInvalidas;
+            if(hasher.VerifyHashedPassword(usuario, usuario.PasswordHash!, request.Password) != PasswordVerificationResult.Success) return UsuarioErrors.CredencialesInvalidas;
                 
             return  await _jwtProvider.Generar(usuario);
         }

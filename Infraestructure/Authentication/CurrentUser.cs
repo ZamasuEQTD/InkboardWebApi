@@ -17,6 +17,6 @@ namespace Infraestructure.Authentication
         public Guid UsuarioId => Guid.Parse(context.HttpContext!.User.Claims.FirstOrDefault(s => s.Type == ClaimTypes.NameIdentifier)!.Value);
         public string Username =>   context.HttpContext!.User.Identity!.Name!;
         public List<string> Roles => context.HttpContext!.User.Claims.Where( s=> s.Type == "role").Select(c=> c.Value).ToList() ;
-
+        public bool EsModerador => Roles.Contains("Moderador");
     }
 }

@@ -71,6 +71,15 @@ namespace Application.Hilos.Queries.GetPortadas
                 splitOn: "es_sticky, spoiler"
             );
 
+            foreach (var portada in portadas)
+            {
+                portada.Recibir_Notificaciones = this._user.IsAuthenticated  && portada.Autor_Id == _user.UsuarioId? portada.Recibir_Notificaciones : null;
+
+                portada.Es_Op = this._user.IsAuthenticated && portada.Autor_Id == _user.UsuarioId;
+
+                portada.Autor_Id  = this._user.IsAuthenticated && _user.EsModerador ? portada.Autor_Id : null;
+            }
+
             return portadas.ToList();
         }
     }

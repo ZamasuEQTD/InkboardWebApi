@@ -6,5 +6,6 @@ namespace Application.Core.Abstractions
         Guid UsuarioId { get; }
         string Username { get; }
         List<string> Roles {get;}
+        bool EsModerador {get;}
     }
 }

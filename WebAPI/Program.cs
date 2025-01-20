@@ -7,6 +7,7 @@ using Infraestructure;
 using Infraestructure.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.FileProviders;
 using WebApi.Extensions;
 using WebAPI;
 using WebAPI.Configuration;
@@ -67,6 +68,22 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(builder.Environment.ContentRootPath, "Media")
+    ),
+
+    RequestPath = "/media"
+});
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(builder.Environment.ContentRootPath, "Static")
+    ),
+    RequestPath = "/Static"
+});
 
 app.UseAuthentication();
 
@@ -78,8 +95,11 @@ app.UseHttpsRedirection();
 app.UseExceptionHandler();
 
 
-
 app.UseStatusCodePages();
+
+app.UseCors(options => 
+    options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()
+);
 
 
 app.Run();

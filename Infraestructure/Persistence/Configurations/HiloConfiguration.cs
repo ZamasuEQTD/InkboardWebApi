@@ -47,6 +47,8 @@ namespace Infraestructure.Persistence.Configurations
 
             builder.OwnsMany(h => h.Interacciones, y =>
             {
+                y.ToTable("hilo_interacciones");
+
                 y.HasKey(r => r.Id);
 
                 y.Property(h => h.Id).HasConversion(id => id.Value, value => new(value));
