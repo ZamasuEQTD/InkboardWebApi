@@ -12,24 +12,13 @@ internal sealed class GlobalExceptionHandler : IExceptionHandler
         Exception exception,
         CancellationToken cancellationToken)
     {
-
-        Console.WriteLine("holaa");
-        int status = exception switch
-        {
-            InvalidCommandException => StatusCodes.Status400BadRequest,
-            DomainBusinessException => StatusCodes.Status400BadRequest,
-
-            _ => StatusCodes.Status500InternalServerError
-        };
-
-        httpContext.Response.StatusCode = status;
+        httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
 
         var problemDetails = new ProblemDetails
         {
-            Status = status,
-            Title = "An error occurred",
-            Type = exception.GetType().Name,
-            Detail = exception.Message,
+            Status = StatusCodes.Status500InternalServerError,
+            Title = "Ha ocurrido un error",
+            Type = "Error desconocido",
         };
 
         await httpContext.Response.WriteAsJsonAsync(problemDetails, cancellationToken);

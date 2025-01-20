@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using Application;
+using Domain;
 using Domain.Usuarios.Models;
 using Domain.Usuarios.Models.ValueObjects;
 using Infraestructure;
@@ -20,7 +21,7 @@ builder.Services.AddIdentity<Usuario, IdentityRole<IdentityId>>()
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
-builder.Services.AddWebApi().AddApplication().AddInfraestructure().AddPersistence(builder.Configuration);
+builder.Services.AddWebApi().AddApplication().AddInfraestructure().AddPersistence(builder.Configuration).AddDomain();
 
 builder.Services.AddSwaggerBearerTokenSupport();
 

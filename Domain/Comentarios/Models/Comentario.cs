@@ -27,7 +27,6 @@ namespace Domain.Comentarios.Models
         public ICollection<RespuestaComentario> Respuestas { get; private set; } = [];
 
         public Comentario(
-            ComentarioId id,
             HiloId hiloId,
             IdentityId autorId,
             Color color,
@@ -36,8 +35,9 @@ namespace Domain.Comentarios.Models
             MediaSpoileableId? mediaId = null,
             int? dados = null,
             string? tagUnico = null)
-            : base(id)
+            : base()
         {
+            Id = new ComentarioId(Guid.NewGuid());
             HiloId = hiloId;
             AutorId = autorId;
             Color = color;

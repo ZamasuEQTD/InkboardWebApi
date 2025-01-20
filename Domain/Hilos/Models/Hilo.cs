@@ -1,6 +1,7 @@
 using Domain.Categorias.Models.ValueObjects;
 using Domain.Comentarios.Models;
 using Domain.Comentarios.Models.ValueObjects;
+using Domain.Comentarios.Utils;
 using Domain.Core;
 using Domain.Core.Abstractions;
 using Domain.Denuncias.Models;
@@ -8,6 +9,7 @@ using Domain.Encuestas.Models.ValueObjects;
 using Domain.Hilos.Models.Enums;
 using Domain.Hilos.Models.ValueObjects;
 using Domain.Media.Models.ValueObjects;
+using Domain.Notificaciones;
 using Domain.Usuarios.Models.ValueObjects;
 
 namespace Domain.Hilos.Models
@@ -29,7 +31,7 @@ namespace Domain.Hilos.Models
         public ICollection<HiloInteraccion> Interacciones { get; private set; } = [];
         public ICollection<Comentario> Comentarios { get; private set; } = [];
         public ICollection<ComentarioDestacado> ComentariosDestacados { get; private set; } = [];
-
+        public ICollection<Notificacion> Notificaciones { get; private set; } = [];
         public Hilo(
             IdentityId autorId,
             string titulo,
@@ -55,6 +57,59 @@ namespace Domain.Hilos.Models
         }
 
         private Hilo() { }
+
+          public Result Comentar(Comentario comentario, DateTime now)
+        {
+            if (!EstaActivo) return HiloErrors.HiloInactivo;
+
+            Comentarios.Add(comentario);
+
+            if(!EsAutor(comentario.AutorId) && RecibirNotificaciones)
+            {
+                Notificaciones.Add(new HiloComentadoNotificacion(AutorId, Id, comentario.Id));
+            }
+
+            List<string> tags = TagUtils.GetTags(comentario.Texto.Value); 
+
+            foreach (var tag in tags)
+            {
+                Comentario? respondido = Comentarios.FirstOrDefault(c => c.Tag == tag);
+
+                if (respondido is not null)
+                {
+                    respondido.AgregarRespuesta(comentario.Id);
+
+                    if(respondido.AutorId != comentario.AutorId && respondido.RecibirNotificaciones)
+                    {
+                        Notificacion notificacion = new ComentarioRespondidoNotificacion(
+                            respondido.AutorId,
+                            Id,
+                            comentario.Id,
+                            respondido.Id
+                        );
+
+                        Notificaciones.Add(notificacion);
+                    }
+                }
+            }
+
+            NotificarSeguidores(comentario);
+
+            this.UltimoBump = now;
+
+            return Result.Success();
+        }
+
+        private void NotificarSeguidores(Comentario comentario){
+             List<IdentityId> seguidores = Interacciones.Where(i => i.Seguido).Select(i => i.UsuarioId).ToList();
+
+            foreach (IdentityId seguidor in seguidores)
+            {
+                if(!comentario.EsAutor(seguidor)) {
+                    Notificaciones.Add(new HiloSeguidoNotificacion(seguidor, Id, comentario.Id));
+                }
+            }
+        }
 
         public Result DestacarComentario(IdentityId usuario, Comentario comentario)
         {
