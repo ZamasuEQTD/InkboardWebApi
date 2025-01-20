@@ -21,57 +21,40 @@ namespace Application.Hilos.Queries.GetPortadas
         {
 
             var sql = @"
-                SELECT
-                    hilo.id,
-                    hilo.titulo,
-                    hilo.autor_id,
-                    hilo.recibir_notificaciones,
-                    hilo.created_at,
-                    subcategoria.nombre_corto AS subcategoria,
-                    sticky.id IS NOT NULL AS es_sticky,
-                    hilo.encuesta_id IS NOT NULL AS tiene_encuesta,
-                    hilo.dados_activado,
-                    hilo.id_unico_activado,
-                    spoileable.spoiler,
-                    portada.miniatura as url
-                FROM hilos hilo
-                    JOIN medias_spoileables spoileable ON spoileable.id = hilo.portada_id
-                    JOIN medias portada ON portada.id = spoileable.hashed_media_id
-                    LEFT JOIN stickies sticky ON hilo.id = sticky.hilo_id
-                    JOIN subcategorias subcategoria ON subcategoria.id = hilo.subcategoria_id
+                SELECT * FROM HiloPortadaView                     
                 /**where**/
                 ORDER BY
                     es_sticky,
-                    hilo.ultimo_bump
+                    ultimo_bump
                 LIMIT 20
             ";
             using var connection = _connection.CreateConnection();
 
             SqlBuilder builder = new SqlBuilder();
 
-            builder.Where("hilo.status = @Status", new {
+            builder.Where("status = @Status", new {
                 Status = HiloStatus.Activo
             });
 
             if(_user.IsAuthenticated && string.IsNullOrEmpty(request.Titulo) && request.Categoria is null){
-                builder.Where("hilo.id NOT IN (SELECT hilo_id FROM hilo_interacciones WHERE usuario_id = @UsuarioId AND oculto = true)", new {_user.UsuarioId });
+                builder.Where("id NOT IN (SELECT hilo_id FROM hilo_interacciones WHERE usuario_id = @UsuarioId AND oculto = true)", new {_user.UsuarioId });
             } else {
                 if(!string.IsNullOrEmpty(request.Titulo)){
-                    builder.Where("hilo.titulo ~ @Titulo", new { request.Titulo });
+                    builder.Where("titulo ~ @Titulo", new { request.Titulo });
                 }
 
                 if(request.UltimaPortada is not null ) {
-                    builder.Where("hilo.ultimo_bump < (SELECT ultimo_bump FROM hilos WHERE id = @Id)", new { Id = (Guid) request.UltimaPortada});
+                    builder.Where("ultimo_bump < (SELECT ultimo_bump FROM hilos WHERE id = @Id)", new { Id = (Guid) request.UltimaPortada});
                 }
             }
             
 
             if(request.Categoria is not null){
 
-                builder.Where("hilo.subcategoria_id = @Categoria", new { request.Categoria});
+                builder.Where("subcategoria_id = @Categoria", new { request.Categoria});
             
             } else if( request.CategoriasBloqueadas.Count != 0){
-                builder.Where("NOT (hilo.subcategoria_id = ANY (@Subcategorias))", new {Subcategorias = request.CategoriasBloqueadas});
+                builder.Where("NOT (subcategoria_id = ANY (@Subcategorias))", new {Subcategorias = request.CategoriasBloqueadas});
             }
 
             SqlBuilder.Template template = builder.AddTemplate(sql);

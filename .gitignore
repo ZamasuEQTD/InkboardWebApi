@@ -11,5 +11,3 @@ WebAPI/Media/Thumbnails/*
 WebAPI/appsettings.json
 
 .vscode
-
-Infraestructure/Migrations/*
