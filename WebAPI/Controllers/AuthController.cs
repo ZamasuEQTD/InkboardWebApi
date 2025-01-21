@@ -50,11 +50,11 @@ namespace WebAPI.Controllers
         }
 
         static public IResult ToResult<T>(this Result<T> result){
-
-       
             if (result.IsSuccess)
             {
-                return Results.Ok(result.Value);
+                return Results.Ok(new ApiResponse<T>(){
+                    Data = result.Value,
+                });
             }
    
 

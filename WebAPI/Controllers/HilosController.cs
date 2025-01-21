@@ -160,13 +160,13 @@ namespace WebAPI.Controllers
 
         [HttpGet()]
         public async Task<IResult> Index([FromQuery] GetPortadasRequest request){
+            
             var result = await sender.Send(new GetPortadasQuery(){
                 Categoria = request.Categoria,
                 Titulo = request.Titulo,
                 UltimaPortada = request.UltimaPortada,
                 CategoriasBloqueadas = request.CategoriasBloqueadas 
             });
-        
             return result.ToResult();
         }
     }

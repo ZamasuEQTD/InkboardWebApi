@@ -1,3 +1,4 @@
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using Application;
 using Domain;
@@ -8,10 +9,12 @@ using Infraestructure.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.FileProviders;
+using WebApi;
 using WebApi.Extensions;
 using WebAPI;
 using WebAPI.Configuration;
 using WebAPI.Configuration.Setup;
+using WebAPI.Core;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -48,10 +51,12 @@ builder.Services.AddAuthentication(
 builder.Services.ConfigureOptions<JwtOptionsSetup>();
 builder.Services.ConfigureOptions<JwtBearerOptionsSetup>();
 
-builder.Services.AddControllers().AddJsonOptions(x =>
-    x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
-builder.Services.AddControllers().AddJsonOptions(opt => opt.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull);
+builder.Services.AddControllers();
 
+builder.Services.ConfigureHttpJsonOptions(options =>
+{
+    options.SerializerOptions.PropertyNamingPolicy =new JsonLowerCaseNamingPolicy();
+});
 
 builder.Services.AddProblemDetails();
 
