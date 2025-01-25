@@ -8,6 +8,7 @@ using Application.Hilos.Commands.OcultarHilo;
 using Application.Hilos.Commands.PonerHiloEnFavorito;
 using Application.Hilos.Commands.PostearHilo;
 using Application.Hilos.Commands.SeguirHilo;
+using Application.Hilos.Queries.GetHilo;
 using Application.Hilos.Queries.GetPortadas;
 using Infraestructure.Media;
 using Infraestructure.Services.Providers;
@@ -134,7 +135,7 @@ namespace WebAPI.Controllers
         }
 
         [Authorize]
-        [HttpPost("hilos/cambiar-notificaciones/{hilo:guid}")]
+        [HttpPost("cambiar-notificaciones/{hilo:guid}")]
         public async Task<IResult> CambiarNotificaciones(Guid hilo)
         {
             await sender.Send(new CambiarNotificacionesHiloCommand()
@@ -146,16 +147,16 @@ namespace WebAPI.Controllers
         }
     
     
-        // [HttpGet("hilo/{hilo:guid}")]
-        // public async Task<IResult> GetHilo(Guid hilo)
-        // {
-        //     await sender.Send(new GetHiloQuery()
-        //     {
-        //         Hilo = hilo
-        //     });
+         [HttpGet("{hiloId:guid}")]
+         public async Task<IResult> GetHilo(Guid hiloId)
+         {
+            var result =  await sender.Send(new GetHiloQuery()
+            {
+                HiloId = hiloId
+            });
 
-        //     return Results.Ok();
-        // }
+             return result.ToResult();
+         }
 
 
         [HttpGet()]
