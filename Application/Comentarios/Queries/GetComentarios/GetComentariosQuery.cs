@@ -18,9 +18,12 @@ namespace Application.Comentarios.Queries.GetComentarios
         public string? Dados {get;set;}
         public string? Tag_Unico {get;set;}
         public string Color {get;set;}
-        [JsonIgnore]
-        public Guid? Respondido_Por {get;set;}
         public DateTime Created_At {get;set;}
-        public List<GetComentarioResponse> Responde {get;set;} = [];
+        public List<string> Responde_A {get;set;} = [];
+        public List<string> Respondido_Por {get;set;} = [];
+        [JsonIgnore]
+        public string Responde {get;set;}
+        [JsonIgnore]
+        public string Respondido {get;set;}
     }
 }

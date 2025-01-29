@@ -25,7 +25,7 @@ namespace Application.Hilos.Queries.GetPortadas
                 /**where**/
                 ORDER BY
                     es_sticky,
-                    ultimo_bump
+                    ultimo_bump DESC
                 LIMIT 20
             ";
             using var connection = _connection.CreateConnection();

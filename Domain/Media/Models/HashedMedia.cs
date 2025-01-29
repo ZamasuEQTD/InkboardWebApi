@@ -45,7 +45,7 @@ namespace Domain.Media.Models
         private MediaProvider(string value) => Value = value;
         public string Value { get; private set; }
         public static readonly MediaProvider Youtube = new MediaProvider("Youtube");
-        public static readonly MediaProvider Imagen = new MediaProvider("Imagen");
+        public static readonly MediaProvider Imagen = new MediaProvider("Image");
         public static readonly MediaProvider Video = new MediaProvider("Video");
         public static readonly MediaProvider Gif = new MediaProvider("Gif");
         protected override IEnumerable<object> GetAtomicValues()

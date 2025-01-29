@@ -20,71 +20,62 @@ namespace Application.Comentarios.Queries.GetComentarios
             using var connection = _connection.CreateConnection();
 
             var sql = @"
-                WITH ultimo_comentario AS (
-                    -- Seleccionar los ú ltimos 10 comentarios principales
-                    SELECT
-                        id
-                    FROM
-                        comentarios
-                    WHERE
-                        status = 0 AND hilo_id = @Hilo
-                    ORDER BY
-                        created_at DESC
-                    LIMIT
-                        20
-                ), comentarios_con_respuestas AS (
-                    -- Seleccionar los comentarios principales
-                    SELECT
-                        comentario.id,
-                        comentario.tag,
-                        comentario.texto,
-                        comentario.created_at,
-                        comentario.color,
-                       	NULL::uuid AS respondido_por
-                    FROM ultimo_comentario uc
-                    JOIN comentarios comentario ON comentario.id = uc.id
-                    UNION ALL
-                    SELECT
-                        comentario.id,
-                        comentario.tag,
-                        comentario.texto,
-                        comentario.created_at,
-                        comentario.color,
-                        respondido.respuesta_id AS respondido_por
-                    FROM
-                        comentarios comentario
-                        JOIN respuesta_comentario respondido ON respondido.respondido_id = comentario.id
-                        JOIN comentarios_con_respuestas cr ON cr.id = respondido.respuesta_id
-                    WHERE
-                        comentario.status = 0
-                )
                 SELECT
-                    *
+                    c.id,
+                    c.texto,
+                    c.tag,
+                    c.color,
+                    c.tag_unico,
+                    c.dados,
+                    c.created_at,
+                    respuesta.tag as respondido,
+                    responde.tag as responde
                 FROM
-                    comentarios_con_respuestas
+                    (
+                        SELECT
+                            *
+                        FROM
+                            comentarios
+                        WHERE
+                            status = 0
+                        ORDER BY
+                            created_at DESC
+                        LIMIT 20
+                    ) AS c
+                    LEFT JOIN medias_spoileables ms ON c.media_id = ms.id
+                    LEFT JOIN respuesta_comentario rc ON rc.respondido_id = c.id
+                    LEFT JOIN comentarios respuesta ON rc.respuesta_id = respuesta.id  
+                    LEFT JOIN respuesta_comentario cr ON cr.respuesta_id = c.id
+                    LEFT JOIN comentarios responde ON cr.respondido_id = responde.id  
+                
                 ORDER BY
-                    created_at DESC;
+                    created_at DESC
             ";
 
             Dictionary<Guid, GetComentarioResponse> _comentariosDic = new Dictionary<Guid, GetComentarioResponse>();
 
-            List<GetComentarioResponse> _comentarios = [];
-
-            var comentarios = await connection.QueryAsync<GetComentarioResponse>(sql, new {
-                request.Hilo
-            });
-
-            foreach (var c in comentarios)
+            var comentarios = await connection.QueryAsync<GetComentarioResponse, string, string, GetComentarioResponse>(sql, 
+                        (comentario, respondido, responde) => 
             {
-                if(c.Respondido_Por is null){
-                    _comentariosDic.Add(c.Id, c);
-                    _comentarios.Add(c);
-                } else {
-                    _comentariosDic[(Guid)c.Respondido_Por].Responde.Add(c);
+                if (!_comentariosDic.TryGetValue(comentario.Id, out var comentarioEntry))
+                {
+                    comentarioEntry = comentario;
+                    _comentariosDic.Add(comentarioEntry.Id, comentarioEntry);
                 }
-            }
 
-            return _comentarios.ToList();
+                if(responde is not null && !comentarioEntry.Responde_A.Contains(responde)) {
+                    comentarioEntry.Responde_A.Add(responde);
+                }   
+        
+                if(respondido is not null && !comentarioEntry.Respondido_Por.Contains(respondido)) {
+                    comentarioEntry.Respondido_Por.Add(respondido);
+                }
+
+                return comentarioEntry;
+            },
+            splitOn: "respondido,responde");
+
+            return Result<List<GetComentarioResponse>>.Success(_comentariosDic.Values.ToList());
         }
     }
 }
