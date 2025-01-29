@@ -85,7 +85,24 @@ namespace Infraestructure.Persistence
                 }
 
                 if(!context.Set<Categoria>().Any()){
-                    List<Categoria> categorias = [ new Categoria("Tecnologia", false, [new Subcategoria("Inteligencia Artificial", "IA")])];
+                    List<Categoria> categorias = [ 
+                        new Categoria("General",false , [
+                            new Subcategoria("General", "GEN"),
+                            new Subcategoria("Politica", "POL"),
+                            new Subcategoria("Anecdotas", "ANC")
+                        ]),
+                        new Categoria("Entretenimiento", false, [
+                            new Subcategoria("Cine", "CIN"),
+                            new Subcategoria("Anime", "ANM"),
+                            new Subcategoria("Deportes", "DEP"),
+                            new Subcategoria("Videojuegos", "GMS"),
+                            new Subcategoria("Musica", "MUS"),
+                        ]),
+                        new Categoria("Tecnologia", false, [
+                            new Subcategoria("Inteligencia Artificial", "IA"),
+                            new Subcategoria("Programacion", "PROG"),
+                        ])
+                    ];
                
                     context.Set<Categoria>().AddRange(categorias);
 

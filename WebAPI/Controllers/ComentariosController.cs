@@ -4,6 +4,7 @@ using Application.Comentarios.Commands;
 using Application.Comentarios.Commands.ComentarHilo;
 using Application.Comentarios.Commands.DestacarComentario;
 using Application.Comentarios.Commands.EliminarComentari;
+using Application.Comentarios.Queries.GetComentarios;
 using Infraestructure.Media;
 using Infraestructure.Services.Providers;
 using MediatR;
@@ -25,6 +26,18 @@ namespace WebApi.Controllers
         {
             _sender = sender;
         }
+
+        [HttpGet("hilo/{hilo:guid}")]
+        public async Task<IResult> GetComentarios(Guid hilo)
+        {
+            var result = await _sender.Send(new GetComentariosQuery()
+            {
+                Hilo = hilo
+            });
+
+            return result.ToResult();
+        }
+
 
         [Authorize]
         [HttpPost("hilo/{hilo:guid}/destacar/{comentario:guid}")]

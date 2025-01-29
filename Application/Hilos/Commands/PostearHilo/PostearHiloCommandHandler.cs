@@ -58,8 +58,10 @@ namespace Application.Hilos.Commands.PostearHilo
 
             HashedMedia media;
 
+            Console.WriteLine(request.File);
             if (request.File is not null)
             {
+
                 if (!ARCHIVOS_SOPORTADOS.Contains(request.File.Type)) return HiloErrors.ArchivoDePortadaInvalida;
 
                 media = await _mediaProcesador.Procesar(request.File);

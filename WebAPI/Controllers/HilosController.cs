@@ -47,7 +47,9 @@ namespace WebAPI.Controllers
                 Embed = request.Embed is not null ? new EmbedFile(request.Embed) : null
             });
 
-            return Results.Ok(result);
+            Console.Write(result);
+
+            return result.ToResult();
         }
 
         [Authorize(Roles = "Moderador")]
