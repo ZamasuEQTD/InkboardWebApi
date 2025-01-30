@@ -4,6 +4,7 @@ using Application.Comentarios.Commands;
 using Application.Comentarios.Commands.ComentarHilo;
 using Application.Comentarios.Commands.DestacarComentario;
 using Application.Comentarios.Commands.EliminarComentari;
+using Application.Comentarios.Queries.GetComentarioByTag;
 using Application.Comentarios.Queries.GetComentarios;
 using Infraestructure.Media;
 using Infraestructure.Services.Providers;
@@ -25,6 +26,18 @@ namespace WebApi.Controllers
         public ComentariosController(ISender sender)
         {
             _sender = sender;
+        }
+
+        [HttpGet("tag/{tag}/{hilo:guid}")]
+        public async Task<IResult> GetComentarioByTag(string tag, Guid hilo)
+        {
+            var result = await _sender.Send(new GetComentarioByTagQuery()
+            {
+                Tag = tag,
+                Hilo = hilo
+            });
+
+            return result.ToResult();
         }
 
         [HttpGet("hilo/{hilo:guid}")]

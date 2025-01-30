@@ -19,8 +19,8 @@ namespace Application.Comentarios.Queries.GetComentarios
         public string? Tag_Unico {get;set;}
         public string Color {get;set;}
         public DateTime Created_At {get;set;}
-        public List<string> Responde_A {get;set;} = [];
-        public List<string> Respondido_Por {get;set;} = [];
+        public HashSet<string> Responde_A {get;set;} = [];
+        public HashSet<string> Respondido_Por {get;set;} = [];
         [JsonIgnore]
         public string Responde {get;set;}
         [JsonIgnore]
