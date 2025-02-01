@@ -11,10 +11,10 @@ namespace Infraestructure.Services.Providers
             _configuration = configuration;
         }
         public string BaseUrl => _configuration["Url"]!;
-        public string Media => BaseUrl + "/media/";
-        public string Files => BaseUrl + "/media/files/";
+        public string Media => BaseUrl + "/Media/";
+        public string Files => BaseUrl + "/Media/Files/";
 
-        public string Thumbnail => Media + "thumbnails/";
-        public string Previsualizacion =>  Media + "previsualizaciones/";
+        public string Thumbnail => Media + "Thumbnails/";
+        public string Previsualizacion =>  Media + "Previsualizaciones/";
     }
 }

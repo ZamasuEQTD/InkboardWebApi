@@ -87,7 +87,7 @@ app.UseStaticFiles(new StaticFileOptions
     FileProvider = new PhysicalFileProvider(
         Path.Combine(builder.Environment.ContentRootPath, "Static")
     ),
-    RequestPath = "/Static"
+    RequestPath = "/static"
 });
 
 app.UseAuthentication();

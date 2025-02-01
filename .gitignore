@@ -4,6 +4,11 @@
 obj
 
 
+WebAPI/media/files/*
+WebAPI/media/previsualizaciones/*
+WebAPI/media/thumbnails/*
+
+
 WebAPI/Media/Files/*
 WebAPI/Media/Previsualizaciones/*
 WebAPI/Media/Thumbnails/*
