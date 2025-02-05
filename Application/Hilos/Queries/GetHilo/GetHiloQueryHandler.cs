@@ -1,6 +1,7 @@
 using Application.Categorias.Queries.GetCategorias;
 using Application.Core.Abstractions;
 using Application.Core.Abstractions.Messaging;
+using Application.Core.Responses;
 using Application.Encuestas.Queries.Responses;
 using Dapper;
 using Domain.Core;
@@ -23,7 +24,7 @@ namespace Application.Hilos.Queries.GetHilo {
 
             GetEncuestaResponse? _encuesta = null;
 
-            var responses = await  connection.QueryAsync<GetHiloResponse,GetHiloMediaResponse,GetSubcategoriaResponse,GetEncuestaResponse,GetEncuestaRespuestaResponse, GetHiloResponse>(@"
+            var responses = await  connection.QueryAsync<GetHiloResponse,GetMediaResponse,GetSubcategoriaResponse,GetEncuestaResponse,GetEncuestaRespuestaResponse, GetHiloResponse>(@"
                 WITH HilosFiltrados AS (
                     SELECT *
                     FROM hilos
@@ -72,7 +73,6 @@ namespace Application.Hilos.Queries.GetHilo {
                 LEFT JOIN votos voto_usuario ON respuesta.id = voto_usuario.respuesta_id AND voto_usuario.votante_id = @UsuarioId;
             ", (hilo, media, subcategoria, encuesta, respuesta) => {
 
-                Console.WriteLine(encuesta);
                 hilo.Media = media;
 
                 hilo.Subcategoria = subcategoria;

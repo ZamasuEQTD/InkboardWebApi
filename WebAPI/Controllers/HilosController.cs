@@ -34,6 +34,8 @@ namespace WebAPI.Controllers
         [HttpPost("postear")]
         public async Task<IResult> Postear([FromForm] PostearHiloRequest request)
         {
+           
+            Console.WriteLine(System.Text.Json.JsonSerializer.Serialize(request));
             var result = await sender.Send(new PostearHiloCommand()
             {
                 Titulo = request.Titulo,

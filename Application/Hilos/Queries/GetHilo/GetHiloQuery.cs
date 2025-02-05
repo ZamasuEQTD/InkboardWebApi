@@ -1,5 +1,6 @@
 using Application.Categorias.Queries.GetCategorias;
 using Application.Core.Abstractions.Messaging;
+using Application.Core.Responses;
 using Application.Encuestas.Queries.Responses;
 
 namespace Application.Hilos.Queries.GetHilo
@@ -18,16 +19,10 @@ namespace Application.Hilos.Queries.GetHilo
         public int Cantidad_Comentarios { get; set; }
         public bool? Recibir_Notificaciones {get;set;}
         public GetSubcategoriaResponse Subcategoria {get;set;}
-        public GetHiloMediaResponse Media {get;set;}
+        public GetMediaResponse Media {get;set;}
         public GetEncuestaResponse? Encuesta {get;set;}
     }   
 
 
-    public class GetHiloMediaResponse
-    {
-        public string Provider { get; set; }
-        public bool Spoiler { get; set; }
-        public string Url { get; set; }
-        public string? Previsualizacion { get; set; }
-    }
+    
 }
