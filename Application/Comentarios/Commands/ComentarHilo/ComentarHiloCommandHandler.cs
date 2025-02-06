@@ -11,6 +11,7 @@ using Domain.Comentarios.Models.ValueObjects;
 using Domain.Comentarios.Services;
 using Domain.Core;
 using Domain.Core.Abstractions;
+using Domain.Core.Services;
 using Domain.Hilos;
 using Domain.Hilos.Models;
 using Domain.Hilos.Models.ValueObjects;
@@ -92,11 +93,8 @@ namespace Application.Comentarios.Commands.ComentarHilo {
                 TagsService.GenerarTag(),
                 reference?.Id,
                 hilo.Configuracion.DadosActivado? DadosService.Generar() : null,
-                hilo.Configuracion.IdUnicoActivado ? TagsService.GenerarTagUnico(
-                    hilo.Id,
-                    new IdentityId(_user.UsuarioId)
-                    ) :null
-                );
+                hilo.Configuracion.IdUnicoActivado ? TagsService.GenerarTagUnico(RandomSeedGeneratorService.GenerarSeed( hilo.Id.Value.ToString() + new IdentityId(_user.UsuarioId).Value.ToString())) :null
+            );
 
             Result result = hilo.Comentar(c, _timeProvider.UtcNow);
 
