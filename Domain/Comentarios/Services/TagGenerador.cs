@@ -13,8 +13,7 @@ namespace Domain.Comentarios.Services
     {
         static private readonly Random _random = new Random();
         static public string GenerarTag() =>  RandomTextBuilderService.BuildRandomString(_random,8);
-        static public string GenerarTagUnico(HiloId hiloId, IdentityId usuarioId) => RandomTextBuilderService.BuildRandomString(
-            new Random((hiloId.ToString() + usuarioId.ToString()).GetHashCode()), 3);
+        static public string GenerarTagUnico(int seed) => RandomTextBuilderService.BuildRandomString(new Random(seed), 3);
     }
 
     static public class DadosService
