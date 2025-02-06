@@ -90,7 +90,7 @@ namespace Application.Comentarios.Queries.GetComentarios
 
             var comentariosList = _comentariosDic.Values.Select(c=> {
 
-                c.Es_Op = this._user.IsAuthenticated && this._user.UsuarioId == c.Autor_Hilo_Id;
+                c.Es_Op = c.Autor_Id == c.Autor_Hilo_Id;
 
                 c.Es_Autor = this._user.IsAuthenticated && this._user.UsuarioId == c.Autor_Id;
                

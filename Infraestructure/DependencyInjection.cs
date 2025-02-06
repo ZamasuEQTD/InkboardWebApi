@@ -9,6 +9,7 @@ using Domain.Comentarios;
 using Domain.Encuestas;
 using Domain.Hilos;
 using Domain.Media;
+using Domain.Notificaciones;
 using Domain.Usuarios;
 using Infraestructure.Authentication;
 using Infraestructure.Authentication.Jwt;
@@ -45,6 +46,8 @@ namespace Infraestructure
             services.AddScoped<IComentariosRepository, ComentariosRepository>();
             services.AddScoped<IEncuestasRepository, EncuestasRepository>();
             services.AddScoped<IMediasRepository, MediasRepository>();
+
+            services.AddScoped<INotificacionesRepository, NotificacionesRepository>();
 
             return services;
         }

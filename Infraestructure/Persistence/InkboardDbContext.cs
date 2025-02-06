@@ -5,6 +5,7 @@ using Domain.Comentarios.Models;
 using Domain.Encuestas;
 using Domain.Hilos.Models;
 using Domain.Media.Models;
+using Domain.Notificaciones;
 using Domain.Usuarios.Models;
 using Domain.Usuarios.Models.ValueObjects;
 using Microsoft.AspNetCore.Identity;
@@ -23,6 +24,8 @@ namespace Infraestructure.Persistence
         public DbSet<Subcategoria> Subcategorias {get; set;}
         public DbSet<Comentario> Comentarios {get; set;}
         public DbSet<Baneo> Baneos {get; set;}
+        public DbSet<Notificacion> Notificaciones {get; set;}
+
         public InkboardDbContext(DbContextOptions<InkboardDbContext> options) : base(options) {}
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
