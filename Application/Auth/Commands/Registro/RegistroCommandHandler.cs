@@ -47,7 +47,7 @@ namespace Application.Auth.Commands.Registro
 
             await _userManager.CreateAsync(usuario);
         
-            await _userManager.AddToRoleAsync(usuario, "Anonimo");
+            await _userManager.AddToRoleAsync(usuario, AppRoles.Anonimo);
 
             return await _jwtProvider.Generar(usuario);
         }

@@ -15,6 +15,11 @@ namespace Infraestructure.Persistence.Configurations
             builder.HasKey(c => c.Id);
             builder.Property(c => c.Id).HasConversion(id => id.Value, value => new(value));
 
+            builder.OwnsOne(h=>h.Autor, autor =>
+            {
+                autor.Property(a => a.Username).HasColumnName("autor_username");
+                autor.Property(a => a.Role).HasColumnName("autor_role");
+            });
 
             builder.Property(c => c.Texto).HasConversion(text => text.Value, value => Texto.Create(value).Value);
 

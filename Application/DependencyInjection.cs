@@ -17,6 +17,8 @@ namespace Application
             .AddClasses(c => c.AssignableTo(typeof(IRequestHandler<>)))
             .AsImplementedInterfaces().WithScopedLifetime());
 
+            services.AddScoped<UserAutorProvider>();
+
             services.AddScoped<IDateTimeProvider, DateTimeProvider>();
 
             services.AddScoped<IHasher, Hasher>();

@@ -2,6 +2,7 @@
 
 using Application.Core.Abstractions;
 using Application.Core.Abstractions.Messaging;
+using Application.Core.Services;
 using Application.Medias.Abstractions.Providers;
 using Application.Medias.Services;
 using Domain.Categorias;
@@ -37,7 +38,8 @@ namespace Application.Comentarios.Commands.ComentarHilo {
         private readonly MediaProcesador _mediaProcesador;
         private readonly IMediasRepository _mediasRepository;
         private readonly EmbedProcesador _embedProcesador;
-        public ComentarHiloCommandHandler(IUnitOfWork unitOfWork, IHilosRepository hilosRepository, ICurrentUser userContext, ICategoriasRepository categoriasRepository, IDateTimeProvider timeProvider, IColorService colorService, MediaProcesador mediaProcesador, IMediasRepository mediasRepository, EmbedProcesador embedProcesador)
+        private readonly UserAutorProvider _userAutorProvider;
+        public ComentarHiloCommandHandler(IUnitOfWork unitOfWork, IHilosRepository hilosRepository, ICurrentUser userContext, ICategoriasRepository categoriasRepository, IDateTimeProvider timeProvider, IColorService colorService, MediaProcesador mediaProcesador, IMediasRepository mediasRepository, EmbedProcesador embedProcesador, UserAutorProvider userAutorProvider)
         {
             _unitOfWork = unitOfWork;
             _hilosRepository = hilosRepository;
@@ -48,6 +50,7 @@ namespace Application.Comentarios.Commands.ComentarHilo {
             _mediaProcesador = mediaProcesador;
             _mediasRepository = mediasRepository;
             _embedProcesador = embedProcesador;
+            _userAutorProvider = userAutorProvider;
         }
 
         public async Task<Result> Handle(ComentarHiloCommand request, CancellationToken cancellationToken)
@@ -90,6 +93,7 @@ namespace Application.Comentarios.Commands.ComentarHilo {
                 new IdentityId(_user.UsuarioId),
                 await _colorService.GenerarColor(hilo.SubcategoriaId),
                 texto.Value,
+                _userAutorProvider.GetAutorRole(),
                 TagsService.GenerarTag(),
                 reference?.Id,
                 hilo.Configuracion.DadosActivado? DadosService.Generar() : null,

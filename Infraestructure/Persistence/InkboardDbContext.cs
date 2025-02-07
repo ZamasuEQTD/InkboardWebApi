@@ -2,6 +2,7 @@ using Application.Core.Abstractions;
 using Domain.Baneos;
 using Domain.Categorias.Models;
 using Domain.Comentarios.Models;
+using Domain.Core;
 using Domain.Encuestas;
 using Domain.Hilos.Models;
 using Domain.Media.Models;
@@ -32,21 +33,11 @@ namespace Infraestructure.Persistence
         {
             optionsBuilder.UseSeeding((context, isDevelopment) => {
                 List<IdentityRole<IdentityId>> roles = [
-                    new IdentityRole<IdentityId> {
-                        Id = new IdentityId(Guid.NewGuid()),
-                        Name = "Owner",
-                        NormalizedName = "OWNER"
-                    },
-                    new IdentityRole<IdentityId> {
-                        Id = new IdentityId(Guid.NewGuid()),
-                        Name = "Moderador",
-                        NormalizedName = "MODERADOR"
-                    },
-                    new IdentityRole<IdentityId> {
-                        Id = new IdentityId(Guid.NewGuid()),
-                        Name = "Anonimo",
-                        NormalizedName = "ANONIMO"
-                    }
+                  ..AppRoles.Roles.Select(role => new IdentityRole<IdentityId>(){
+                    Id = new IdentityId(Guid.NewGuid()),
+                    Name = role,
+                    NormalizedName = role.ToUpper()
+                  })
                 ];
 
                 if(!context.Set<IdentityRole<IdentityId>>().Any()) {

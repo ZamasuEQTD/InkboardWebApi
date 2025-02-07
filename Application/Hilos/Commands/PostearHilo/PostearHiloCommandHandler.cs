@@ -1,6 +1,7 @@
 using Application.Core.Abstractions;
 using Application.Core.Abstractions.Messaging;
 using Application.Core.Exceptions;
+using Application.Core.Services;
 using Application.Medias.Abstractions.Providers;
 using Application.Medias.Services;
 using Domain.Categorias.Models.ValueObjects;
@@ -30,7 +31,8 @@ namespace Application.Hilos.Commands.PostearHilo
         private readonly ICurrentUser _user;
         private readonly IUnitOfWork _unitOfWork;
         private readonly EmbedProcesador _embedProcesador;
-        public PostearHiloCommandHiloCommandHandler(IUnitOfWork unitOfWork, ICurrentUser user, IEncuestasRepository encuestasRepository, IMediasRepository mediasRepository, IHilosRepository hilosRepository, MediaProcesador mediaProcesador, EmbedProcesador embedProcesador)
+        private readonly UserAutorProvider _userAutorProvider;
+        public PostearHiloCommandHiloCommandHandler(IUnitOfWork unitOfWork, ICurrentUser user, IEncuestasRepository encuestasRepository, IMediasRepository mediasRepository, IHilosRepository hilosRepository, MediaProcesador mediaProcesador, EmbedProcesador embedProcesador, UserAutorProvider userAutorProvider)
         {
             _unitOfWork = unitOfWork;
             _embedProcesador = embedProcesador;
@@ -39,6 +41,7 @@ namespace Application.Hilos.Commands.PostearHilo
             _mediasRepository = mediasRepository;
             _hilosRepository = hilosRepository;
             _mediaProcesador = mediaProcesador;
+            _userAutorProvider = userAutorProvider;
         }
 
         public async Task<Result<Guid>> Handle(PostearHiloCommand request, CancellationToken cancellationToken)
@@ -84,6 +87,7 @@ namespace Application.Hilos.Commands.PostearHilo
                 request.Descripcion,
                 new SubcategoriaId(request.Subcategoria),
                 reference.Id,
+                _userAutorProvider.GetAutorRole(),
                 encuestaId,
                 new(
                     request.DadosActivados,

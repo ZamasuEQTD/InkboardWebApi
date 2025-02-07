@@ -4,6 +4,7 @@ using Domain.Comentarios.Models.ValueObjects;
 using Domain.Comentarios.Utils;
 using Domain.Core;
 using Domain.Core.Abstractions;
+using Domain.Core.Models;
 using Domain.Denuncias.Models;
 using Domain.Encuestas.Models.ValueObjects;
 using Domain.Hilos.Models.Enums;
@@ -24,6 +25,7 @@ namespace Domain.Hilos.Models
         public string Descripcion { get; private set; }
         public bool RecibirNotificaciones { get; private set; }
         public ConfiguracionDeComentarios Configuracion { get; private set; }
+        public AutorRole Autor {get; private set;}
         public MediaSpoileableId PortadaId { get; private set; }
         public SubcategoriaId SubcategoriaId { get; private set; }
         public EncuestaId? EncuestaId { get; private set; }
@@ -38,6 +40,7 @@ namespace Domain.Hilos.Models
             string descripcion,
             SubcategoriaId subcategoriaId,
             MediaSpoileableId portadaId,
+            AutorRole autor,
             EncuestaId? encuestaId,
             ConfiguracionDeComentarios configuracion
         )
@@ -49,6 +52,7 @@ namespace Domain.Hilos.Models
             Descripcion = descripcion;
             SubcategoriaId = subcategoriaId;
             PortadaId = portadaId;
+            Autor = autor;
             Configuracion = configuracion;
             RecibirNotificaciones = true;
             Status = HiloStatus.Activo;

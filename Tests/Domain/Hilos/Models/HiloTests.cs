@@ -12,6 +12,7 @@ namespace Tests.Domain.Hilos.Models
 {
     public class HiloTests
     {
+
         [Fact]
         public void Eliminar_HiloActivo_DeberiaCambiarEstadoAEliminado()
         {

@@ -19,6 +19,12 @@ namespace WebAPI.Controllers
 
         [HttpPost("login")]
         public async Task<IResult> Login([FromBody] LoginRequest request){
+            Console.WriteLine("\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+            
+            Console.WriteLine(request.Username);
+            Console.WriteLine(request.Password);
+            Console.WriteLine("\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+
             var result = await this._sender.Send(new LoginCommand(){
                 Username = request.Username,
                 Password = request.Password

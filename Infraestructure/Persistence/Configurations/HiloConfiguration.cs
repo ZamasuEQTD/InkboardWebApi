@@ -24,6 +24,12 @@ namespace Infraestructure.Persistence.Configurations
                 }
             );
 
+            builder.OwnsOne(h=>h.Autor, autor =>
+            {
+                autor.Property(a => a.Username).HasColumnName("autor_username");
+                autor.Property(a => a.Role).HasColumnName("autor_role");
+            });
+
             builder.OwnsOne(h => h.Sticky, y =>
             {
                 y.ToTable("stickies");

@@ -23,7 +23,7 @@ namespace Infraestructure.Authentication.Jwt
         {
             Claim[] claims = {
                 new (JwtRegisteredClaimNames.Sub, usuario.Id.ToString()),
-                new (JwtRegisteredClaimNames.Name,  usuario.ModeradorName ?? usuario.UserName!),
+                new (JwtRegisteredClaimNames.Name,  usuario.StaffName ?? usuario.UserName!),
             };
 
             var roles =await  this.userManager.GetRolesAsync(usuario);

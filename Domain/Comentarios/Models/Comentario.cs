@@ -2,6 +2,7 @@ using Domain.Comentarios.Models.Enums;
 using Domain.Comentarios.Models.ValueObjects;
 using Domain.Core;
 using Domain.Core.Abstractions;
+using Domain.Core.Models;
 using Domain.Hilos.Models;
 using Domain.Hilos.Models.ValueObjects;
 using Domain.Media.Models.ValueObjects;
@@ -17,6 +18,7 @@ namespace Domain.Comentarios.Models
         public HiloId HiloId { get; private set; }
         public IdentityId AutorId { get; private set; }
         public Color Color { get; private set; }
+        public AutorRole Autor {get; private set;}
         public Texto Texto { get; private set; }
         public string Tag { get; private set; }
         public int? Dados { get; private set; }
@@ -31,10 +33,12 @@ namespace Domain.Comentarios.Models
             IdentityId autorId,
             Color color,
             Texto texto,
+            AutorRole autor,
             string tag,
             MediaSpoileableId? mediaId = null,
             int? dados = null,
-            string? tagUnico = null)
+            string? tagUnico = null
+        )
             : base()
         {
             Id = new ComentarioId(Guid.NewGuid());
@@ -48,9 +52,10 @@ namespace Domain.Comentarios.Models
             Dados = dados;
             TagUnico = tagUnico;
             Status = ComentariosStatus.Activo;
+            Autor = autor;
         }
-
         private Comentario() { }
+
 
         public Result Eliminar(Hilo hilo)
         {
