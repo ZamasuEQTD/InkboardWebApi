@@ -56,6 +56,7 @@ namespace Infraestructure.Persistence
                     var usuario = new Usuario(){
                         Id = ownerId,
                         UserName = "Owner",
+                        StaffName = "ZamaSUS",
                         NormalizedUserName = "OWNER"
                     };
                     
@@ -71,6 +72,10 @@ namespace Infraestructure.Persistence
                         new IdentityUserRole<IdentityId>() {
                             RoleId = roles[0].Id,
                             UserId =ownerId 
+                        },
+                        new IdentityUserRole<IdentityId>() {
+                            RoleId = roles[1].Id,
+                            UserId = ownerId 
                         }
                     ]);
 

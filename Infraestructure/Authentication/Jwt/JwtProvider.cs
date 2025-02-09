@@ -28,7 +28,7 @@ namespace Infraestructure.Authentication.Jwt
 
             var roles =await  this.userManager.GetRolesAsync(usuario);
 
-            claims = [.. claims, new Claim("roles", JsonSerializer.Serialize(roles), JsonClaimValueTypes.JsonArray)];
+            claims = [.. claims, new Claim("role", JsonSerializer.Serialize(roles), JsonClaimValueTypes.JsonArray)];
 
             var signingCredentials = new SigningCredentials(
                 new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.SecretKey)),

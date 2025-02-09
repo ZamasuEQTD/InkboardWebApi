@@ -18,9 +18,12 @@ namespace Application.Core.Services
         }
 
         public AutorRole GetAutorRole(){
-            var username = _user.Roles.Any(AppRoles.StaffRoles.Contains) ? _user.Username! : "anonimo";
+
+            var staffRole = AppRoles.StaffRoles.FirstOrDefault(_user.Roles.Contains);
+
+            var username = staffRole is not null ? _user.Username! : "anonimo";
             
-            var role = _user.Roles.FirstOrDefault(AppRoles.StaffRoles.Contains) ?? "Anonimo";
+            var role = staffRole ?? AppRoles.Anonimo;
 
             return new AutorRole(username, role);
         }

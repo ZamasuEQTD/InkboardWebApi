@@ -32,6 +32,8 @@ namespace Application.Comentarios.Queries.GetComentarioByTag
                     c.tag_unico,
                     c.dados,
                     c.created_at,
+                    c.autor_role,
+                    c.autor_username AS autor,
                     respuesta.tag as respondido,
                     responde.tag as responde
                 FROM

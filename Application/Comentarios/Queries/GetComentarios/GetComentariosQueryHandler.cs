@@ -30,6 +30,8 @@ namespace Application.Comentarios.Queries.GetComentarios
                     c.tag,
                     c.color,
                     c.tag_unico,
+                    c.autor_role,
+                    c.autor_username AS autor,
                     c.autor_id,
                     h.autor_id as autor_hilo_id,
                     c.dados,

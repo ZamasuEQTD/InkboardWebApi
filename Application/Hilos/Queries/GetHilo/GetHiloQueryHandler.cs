@@ -49,6 +49,8 @@ namespace Application.Hilos.Queries.GetHilo {
                     hilo.titulo,
                     hilo.descripcion,
                     hilo.created_at,
+                    hilo.autor_role,
+                    hilo.autor_username AS autor,
                     COALESCE(comentarios.cantidad_comentarios, 0) AS cantidad_comentarios,
                     hilo.autor_id,
                     hilo.recibir_notificaciones,

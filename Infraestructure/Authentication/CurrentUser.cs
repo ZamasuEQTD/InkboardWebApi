@@ -16,8 +16,8 @@ namespace Infraestructure.Authentication
         throw new ApplicationException("No hay current user disponible");
 
         public Guid UsuarioId => Guid.Parse(context.HttpContext!.User.Claims.FirstOrDefault(s => s.Type == ClaimTypes.NameIdentifier)!.Value);
-        public string Username =>   context.HttpContext!.User.Identity!.Name!;
-        public List<string> Roles => context.HttpContext!.User.Claims.Where( s=> s.Type == "role").Select(c=> c.Value).ToList() ;
+        public string Username => context.HttpContext!.User.Claims.First(s=> s.Type == "name").Value;
+        public List<string> Roles => context.HttpContext!.User.Claims.Where( s=> s.Type == ClaimTypes.Role).Select(c=> c.Value).ToList() ;
         public bool EsModerador => Roles.Contains(AppRoles.Moderador);
     }
 }

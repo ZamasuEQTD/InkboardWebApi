@@ -21,6 +21,8 @@ namespace Application.Comentarios.Queries.GetComentarios
         public string Color {get;set;}
         public bool Es_Op {get;set;}
         public bool Es_Autor {get;set;}
+        public string Autor {get;set;}
+        public string Autor_Role {get;set;}
         public Guid Autor_Id {get;set;}
         [JsonIgnore]
         public Guid Autor_Hilo_Id {get;set;}
