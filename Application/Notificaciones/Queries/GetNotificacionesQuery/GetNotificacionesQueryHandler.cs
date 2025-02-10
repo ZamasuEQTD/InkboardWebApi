@@ -28,10 +28,7 @@ namespace Application.Notificaciones.Queries.GetNotificacionesQuery
                 notificacion.created_at as fecha,
                 respuesta.tag AS Comentario_Respuesta_Tag,
                 respondido.tag AS Comentario_Respondido_Tag,
-                CASE 
-                    WHEN notificacion.tipo_de_interaccion = 'ComentarioRespondido' THEN respuesta.texto
-                    ELSE h.titulo
-                END AS contenido,
+                respuesta.texto AS contenido,
                 h.id as id,
                 h.titulo as titulo,
                 p.miniatura as portada

@@ -35,7 +35,13 @@ namespace Application.Comentarios.Commands.OcultarComentario
 
             if (comentario is null) return ComentarioErrors.NoEncontrado;
 
-            comentario.Ocultar(hilo, new IdentityId(_context.UsuarioId));
+            Console.Write("Antes");
+
+            var result = comentario.Ocultar(hilo, new IdentityId(_context.UsuarioId));
+
+            Console.Write("Despues");
+
+            if(result.IsFailure) return result;
 
             await _unitOfWork.SaveChangesAsync();
 

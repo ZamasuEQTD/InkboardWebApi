@@ -58,7 +58,13 @@ namespace Application.Comentarios.Queries.GetComentarios
                     LEFT JOIN comentarios respuesta ON rc.respuesta_id = respuesta.id  
                     LEFT JOIN respuesta_comentario cr ON cr.respuesta_id = c.id
                     LEFT JOIN comentarios responde ON cr.respondido_id = responde.id  
-
+                WHERE 
+                NOT @IsAuthenticated OR c.id NOT IN (
+                    SELECT 
+                        comentario_id 
+                    FROM comentario_interracion i
+                    WHERE i.usuario_id = @UsuarioId AND i.oculto AND i.comentario_id = c.id
+                )
                 ORDER BY
                     created_at DESC
             ";
@@ -86,7 +92,9 @@ namespace Application.Comentarios.Queries.GetComentarios
 
                 return comentarioEntry;
             },new {
-                request.Hilo
+                request.Hilo,
+                this._user.IsAuthenticated,
+                usuarioId = this._user.IsAuthenticated? (Guid?) _user.UsuarioId :null
             },
             splitOn: "respondido,responde,url");
 

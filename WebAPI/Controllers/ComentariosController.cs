@@ -4,6 +4,7 @@ using Application.Comentarios.Commands;
 using Application.Comentarios.Commands.ComentarHilo;
 using Application.Comentarios.Commands.DestacarComentario;
 using Application.Comentarios.Commands.EliminarComentari;
+using Application.Comentarios.Commands.OcultarComentario;
 using Application.Comentarios.Queries.GetComentarioByTag;
 using Application.Comentarios.Queries.GetComentarios;
 using Infraestructure.Media;
@@ -16,7 +17,7 @@ using WebAPI.Controllers;
 
 namespace WebApi.Controllers
 {
-    
+
     [Route("api/comentarios")]
     public class ComentariosController : Controller
     {
@@ -53,13 +54,26 @@ namespace WebApi.Controllers
 
 
         [Authorize]
-        [HttpPost("hilo/{hilo:guid}/destacar/{comentario:guid}")]
+        [HttpPost("hilo/{hilo:guid}/destacar/comentario/{comentario:guid}")]
         public async Task<IResult> Destacar(Guid hilo, Guid comentario)
         {
             var result = await _sender.Send(new DestacarComentarioCommand(
                 hilo,
                 comentario
             ));
+
+            return result.ToResult();
+        }
+
+        [Authorize]
+        [HttpPost("hilo/{hilo:guid}/ocultar/comentario/{comentario:guid}")]
+        public async Task<IResult> Ocultar(Guid hilo, Guid comentario)
+        {
+            var result = await _sender.Send(new OcultarComentarioCommand()
+            {
+                Comentario = comentario,
+                Hilo = hilo
+            });
 
             return result.ToResult();
         }
@@ -83,10 +97,11 @@ namespace WebApi.Controllers
         }
 
         [Authorize(Roles = "Moderador")]
-        [HttpDelete("eliminar/hilo/{hilo:guid}/comentario/{comentario:guid}")]
+        [HttpDelete("hilo/{hilo:guid}/eliminar/comentario/{comentario:guid}")]
         public async Task<IResult> Eliminar(Guid comentario, Guid hilo)
         {
-            var result = await _sender.Send(new EliminarComentarioCommand(){
+            var result = await _sender.Send(new EliminarComentarioCommand()
+            {
                 Comentario = comentario,
                 Hilo = hilo
             });
@@ -104,6 +119,6 @@ namespace WebApi.Controllers
         [JsonPropertyName("file")]
         public IFormFile? File { get; set; }
         [JsonPropertyName("spoiler")]
-        public bool Spoiler {get;set;}
+        public bool Spoiler { get; set; }
     }
 }

@@ -50,10 +50,8 @@ namespace Application.Hilos.Queries.GetPortadas
             
 
             if(request.Categoria is not null){
-
                 builder.Where("subcategoria_id = @Categoria", new { request.Categoria});
-            
-            } else if( request.CategoriasBloqueadas.Count != 0){
+            } else if( request.CategoriasBloqueadas.Count   != 0) {
                 builder.Where("NOT (subcategoria_id = ANY (@Subcategorias))", new {Subcategorias = request.CategoriasBloqueadas});
             }
 

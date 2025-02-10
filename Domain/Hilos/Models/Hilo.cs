@@ -126,6 +126,7 @@ namespace Domain.Hilos.Models
             if (ComentarioEstaDestacado(comentario.Id))
             {
                 this.ComentariosDestacados = [..ComentariosDestacados.Where(c => c.Id == comentario.Id)];
+                
                 return Result.Success();
             }
 
