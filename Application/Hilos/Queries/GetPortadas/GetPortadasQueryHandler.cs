@@ -24,7 +24,7 @@ namespace Application.Hilos.Queries.GetPortadas
                 SELECT * FROM HiloPortadaView                     
                 /**where**/
                 ORDER BY
-                    es_sticky,
+                    es_sticky DESC,
                     ultimo_bump DESC
                 LIMIT 20
             ";

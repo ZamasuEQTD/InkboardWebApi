@@ -10,6 +10,7 @@ using Application.Hilos.Commands.PostearHilo;
 using Application.Hilos.Commands.SeguirHilo;
 using Application.Hilos.Queries.GetHilo;
 using Application.Hilos.Queries.GetPortadas;
+using Domain.Core;
 using Infraestructure.Media;
 using Infraestructure.Services.Providers;
 using MediatR;
@@ -48,8 +49,6 @@ namespace WebAPI.Controllers
                 File = request.File is not null ? new FormFileImplementation(request.File) : null,
                 Embed = request.Embed is not null ? new EmbedFile(request.Embed) : null
             });
-
-            Console.Write(result);
 
             return result.ToResult();
         }
