@@ -3,6 +3,7 @@ using Domain.Baneos;
 using Domain.Categorias.Models;
 using Domain.Comentarios.Models;
 using Domain.Core;
+using Domain.Core.Abstractions;
 using Domain.Encuestas;
 using Domain.Hilos.Models;
 using Domain.Media.Models;
@@ -27,7 +28,12 @@ namespace Infraestructure.Persistence
         public DbSet<Baneo> Baneos {get; set;}
         public DbSet<Notificacion> Notificaciones {get; set;}
 
-        public InkboardDbContext(DbContextOptions<InkboardDbContext> options) : base(options) {}
+        private readonly IDateTimeProvider _time;
+
+        public InkboardDbContext(DbContextOptions<InkboardDbContext> options, IDateTimeProvider time) : base(options)
+        {
+            _time = time;
+        }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -57,6 +63,7 @@ namespace Infraestructure.Persistence
                         Id = ownerId,
                         UserName = "Owner",
                         StaffName = "ZamaSUS",
+                        RegistradoEn = _time.UtcNow,
                         NormalizedUserName = "OWNER"
                     };
                     
