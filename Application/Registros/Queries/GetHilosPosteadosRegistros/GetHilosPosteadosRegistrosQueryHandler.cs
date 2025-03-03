@@ -29,10 +29,11 @@ namespace Application.Registros.Queries.GetHilosPosteadosRegistros
                 FROM hilos h
                 JOIN medias_spoileables spoileable ON spoileable.id = h.portada_id
                 JOIN medias portada ON portada.id = spoileable.hashed_media_id
-                WHERE h.autor_id = @UsuarioId
+                WHERE h.autor_id = @UsuarioId AND h.status = 0 AND (@Hilo IS NULL OR  h.created_at < (SELECT h.created_at FROM hilos h WHERE h.id = @Hilo))
                 ORDER BY h.created_at DESC;
             ", new {
-                request.UsuarioId
+                request.UsuarioId,
+                Hilo = request.Hilo != null ? (Guid?) request.Hilo: (Guid?) null
             });
 
             return registros.ToList();

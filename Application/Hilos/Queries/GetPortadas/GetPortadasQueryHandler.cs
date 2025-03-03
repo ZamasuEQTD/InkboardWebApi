@@ -36,24 +36,14 @@ namespace Application.Hilos.Queries.GetPortadas
                 Status = HiloStatus.Activo
             });
 
-            if(_user.IsAuthenticated && string.IsNullOrEmpty(request.Titulo) && request.Categoria is null){
+            if(_user.IsAuthenticated){
                 builder.Where("id NOT IN (SELECT hilo_id FROM hilo_interacciones WHERE usuario_id = @UsuarioId AND oculto = true)", new {_user.UsuarioId });
-            } else {
-                if(!string.IsNullOrEmpty(request.Titulo)){
-                    builder.Where("titulo ~ @Titulo", new { request.Titulo });
-                }
-
-                if(request.UltimaPortada is not null ) {
-                    builder.Where("ultimo_bump < (SELECT ultimo_bump FROM hilos WHERE id = @Id)", new { Id = (Guid) request.UltimaPortada});
-                }
+            }  
+           
+            if(request.UltimaPortada is not null ) {
+                builder.Where("ultimo_bump < (SELECT ultimo_bump FROM hilos WHERE id = @Id)", new { Id = (Guid) request.UltimaPortada});
             }
             
-            if(request.Categoria is not null){
-                builder.Where("subcategoria_id = @Categoria", new { request.Categoria});
-            } else if( request.CategoriasBloqueadas.Count   != 0) {
-                builder.Where("NOT (subcategoria_id = ANY (@Subcategorias))", new {Subcategorias = request.CategoriasBloqueadas});
-            }
-
             SqlBuilder.Template template = builder.AddTemplate(sql);
 
             var portadas = await connection.QueryAsync<GetPortadaResponse,GetBanderas, GetPortadaMiniatura, GetPortadaResponse>(template.RawSql,

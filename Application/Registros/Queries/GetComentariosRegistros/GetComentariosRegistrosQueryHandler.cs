@@ -22,6 +22,7 @@ namespace Application.Registros.Queries.GetComentariosRegistros
 
             var registros = await connection.QueryAsync<RegistroResponse>(@"
                 SELECT 
+                    c.id as comentario_id,
                     h.id,
                     h.titulo,
                     c.texto AS contenido,
@@ -32,10 +33,11 @@ namespace Application.Registros.Queries.GetComentariosRegistros
                 JOIN hilos h ON h.id = c.hilo_id
                 JOIN medias_spoileables spoileable ON spoileable.id = h.portada_id
                 JOIN medias portada ON portada.id = spoileable.hashed_media_id
-                WHERE c.autor_id = @UsuarioId
+                WHERE c.autor_id = @UsuarioId AND h.status = 0 AND (@Comentario IS NULL OR  c.created_at < (SELECT c.created_at FROM comentarios c WHERE c.id = @Comentario))
                 ORDER BY c.created_at DESC;
             ", new {
-                request.UsuarioId
+                request.UsuarioId,
+                Comentario = request.UltimoComentario != null ?  request.UltimoComentario : null
             });
 
             return registros.ToList();
