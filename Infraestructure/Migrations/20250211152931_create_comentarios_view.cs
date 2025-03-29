@@ -27,6 +27,7 @@ namespace Infraestructure.Migrations
                     c.dados,
                     c.created_at,
                     c.status,
+                    c.recibir_notificaciones,
                     media.url,
                     media.previsualizacion,
                     media.provider,

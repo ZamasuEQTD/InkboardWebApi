@@ -41,7 +41,7 @@ namespace WebAPI.Controllers {
         }
 
         [Authorize]
-        [HttpPost("leer")]
+        [HttpPost("leer-todas")]
         public async Task<IResult> LeerNotificaciones(){
              var result = await _sender.Send(new LeerNotificacionesCommand(){
             });
