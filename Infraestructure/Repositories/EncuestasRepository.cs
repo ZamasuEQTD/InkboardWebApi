@@ -1,4 +1,5 @@
 using Domain.Encuestas;
+using Domain.Encuestas.Models;
 using Domain.Encuestas.Models.ValueObjects;
 using Domain.Usuarios;
 using Infraestructure.Persistence;
@@ -9,7 +10,7 @@ namespace Infraestructure.Repositories
     public class EncuestasRepository : IEncuestasRepository
     {
 
-        private InkboardDbContext _context;
+        private readonly InkboardDbContext _context;
 
         public EncuestasRepository(InkboardDbContext context)
         {

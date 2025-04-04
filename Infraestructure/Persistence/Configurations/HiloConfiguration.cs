@@ -1,6 +1,7 @@
 using Domain.Categorias.Models;
 using Domain.Comentarios.Models;
 using Domain.Encuestas;
+using Domain.Encuestas.Models;
 using Domain.Hilos.Models;
 using Domain.Media.Models;
 using Domain.Notificaciones;

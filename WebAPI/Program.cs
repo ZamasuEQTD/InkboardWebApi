@@ -15,8 +15,11 @@ using WebAPI;
 using WebAPI.Configuration;
 using WebAPI.Configuration.Setup;
 using WebAPI.Core;
+using WebAPI.Hub;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddSignalR();
 
 builder.Services.AddIdentity<Usuario, IdentityRole<IdentityId>>()
 .AddRoles<IdentityRole<IdentityId>>()
@@ -99,6 +102,8 @@ app.MapControllers();
 app.UseHttpsRedirection();
 app.UseExceptionHandler();
 
+
+app.MapHub<EncuestaSignalrHub>("/hubs/encuestas");
 
 app.UseStatusCodePages();
 

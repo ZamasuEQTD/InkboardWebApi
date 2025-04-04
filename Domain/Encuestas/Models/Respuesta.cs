@@ -1,7 +1,7 @@
 using Domain.Core.Abstractions;
 using Domain.Encuestas.Models.ValueObjects;
 
-namespace Domain.Encuestas
+namespace Domain.Encuestas.Models
 {
     public class Respuesta : Entity<RespuestaId>
     {

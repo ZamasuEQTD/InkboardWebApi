@@ -1,5 +1,7 @@
+using Application.Encuestas.Abstractions;
 using Application.Medias.Abstractions.Providers;
 using Infraestructure.Services.Providers;
+using WebAPI.Hub;
 
 namespace WebAPI
 {
@@ -9,6 +11,7 @@ namespace WebAPI
         { 
             services.AddScoped<IMediaFolderProvider, FolderProvider>();
 
+            services.AddScoped<IEncuestaHub, EncuestasHub>();
             return services;
         }
     }

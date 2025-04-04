@@ -4,6 +4,7 @@ using Application.Core.Exceptions;
 using Application.Encuestas.Commands.VotarRespuesta;
 using Domain.Core;
 using Domain.Encuestas;
+using Domain.Encuestas.Models;
 using Domain.Encuestas.Models.ValueObjects;
 using Domain.Usuarios;
 using Domain.Usuarios.Models.ValueObjects;

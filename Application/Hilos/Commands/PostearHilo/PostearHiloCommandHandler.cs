@@ -7,6 +7,7 @@ using Application.Medias.Services;
 using Domain.Categorias.Models.ValueObjects;
 using Domain.Core;
 using Domain.Encuestas;
+using Domain.Encuestas.Models;
 using Domain.Encuestas.Models.ValueObjects;
 using Domain.Hilos;
 using Domain.Hilos.Models;

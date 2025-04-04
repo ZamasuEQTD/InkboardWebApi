@@ -3,7 +3,7 @@ using Domain.Encuestas.Models.ValueObjects;
 using Domain.Usuarios;
 using Domain.Usuarios.Models.ValueObjects;
 
-namespace Domain.Encuestas
+namespace Domain.Encuestas.Models
 {
     public class Voto : Entity<VotoId>
     {

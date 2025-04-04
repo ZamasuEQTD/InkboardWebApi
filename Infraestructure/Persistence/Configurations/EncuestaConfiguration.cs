@@ -1,4 +1,5 @@
 using Domain.Encuestas;
+using Domain.Encuestas.Models;
 using Domain.Usuarios.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

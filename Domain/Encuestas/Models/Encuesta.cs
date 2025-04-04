@@ -1,11 +1,12 @@
 using System.Security.Cryptography.X509Certificates;
 using Domain.Core;
 using Domain.Core.Abstractions;
+using Domain.Encuestas.DomainEvents;
 using Domain.Encuestas.Models.ValueObjects;
 using Domain.Usuarios;
 using Domain.Usuarios.Models.ValueObjects;
 
-namespace Domain.Encuestas
+namespace Domain.Encuestas.Models
 {
     public class Encuesta : Entity<EncuestaId>
     {
@@ -33,6 +34,8 @@ namespace Domain.Encuestas
                 usuarioId,
                 respuestaId
             ));
+
+            Raise(new EncuestaVotadaDomainEvent(this.Id.Value, respuestaId.Value));
 
             return Result.Success();
         }

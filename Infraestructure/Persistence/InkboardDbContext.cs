@@ -5,11 +5,13 @@ using Domain.Comentarios.Models;
 using Domain.Core;
 using Domain.Core.Abstractions;
 using Domain.Encuestas;
+using Domain.Encuestas.Models;
 using Domain.Hilos.Models;
 using Domain.Media.Models;
 using Domain.Notificaciones;
 using Domain.Usuarios.Models;
 using Domain.Usuarios.Models.ValueObjects;
+using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -17,27 +19,31 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Infraestructure.Persistence
 {
-    public class InkboardDbContext : IdentityDbContext<Usuario, IdentityRole<IdentityId>, IdentityId>{
+    public class InkboardDbContext : IdentityDbContext<Usuario, IdentityRole<IdentityId>, IdentityId>
+    {
         public DbSet<Usuario> Usuarios { get; set; }
-        public DbSet<Categoria> Categorias {get;set;}
-        public DbSet<Encuesta> Encuestas {get; set;}
-        public DbSet<Hilo> Hilos {get; set;}
-        public DbSet<HashedMedia> Medias {get; set;}
-        public DbSet<Subcategoria> Subcategorias {get; set;}
-        public DbSet<Comentario> Comentarios {get; set;}
-        public DbSet<Baneo> Baneos {get; set;}
-        public DbSet<Notificacion> Notificaciones {get; set;}
+        public DbSet<Categoria> Categorias { get; set; }
+        public DbSet<Encuesta> Encuestas { get; set; }
+        public DbSet<Hilo> Hilos { get; set; }
+        public DbSet<HashedMedia> Medias { get; set; }
+        public DbSet<Subcategoria> Subcategorias { get; set; }
+        public DbSet<Comentario> Comentarios { get; set; }
+        public DbSet<Baneo> Baneos { get; set; }
+        public DbSet<Notificacion> Notificaciones { get; set; }
 
         private readonly IDateTimeProvider _time;
+        private readonly IPublisher _publisher;
 
-        public InkboardDbContext(DbContextOptions<InkboardDbContext> options, IDateTimeProvider time) : base(options)
+        public InkboardDbContext(DbContextOptions<InkboardDbContext> options, IDateTimeProvider time, IPublisher publisher) : base(options)
         {
             _time = time;
+            _publisher = publisher;
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSeeding((context, isDevelopment) => {
+            optionsBuilder.UseSeeding((context, isDevelopment) =>
+            {
                 List<IdentityRole<IdentityId>> roles = [
                   ..AppRoles.Roles.Select(role => new IdentityRole<IdentityId>(){
                     Id = new IdentityId(Guid.NewGuid()),
@@ -46,7 +52,8 @@ namespace Infraestructure.Persistence
                   })
                 ];
 
-                if(!context.Set<IdentityRole<IdentityId>>().Any()) {
+                if (!context.Set<IdentityRole<IdentityId>>().Any())
+                {
 
                     context.Set<IdentityRole<IdentityId>>().AddRange(roles);
 
@@ -55,34 +62,37 @@ namespace Infraestructure.Persistence
 
                 IdentityId ownerId = new IdentityId(Guid.NewGuid());
 
-                if(!context.Set<Usuario>().Any()) {
+                if (!context.Set<Usuario>().Any())
+                {
 
                     var hasher = new PasswordHasher<Usuario>();
 
-                    var usuario = new Usuario(){
+                    var usuario = new Usuario()
+                    {
                         Id = ownerId,
                         UserName = "Owner",
                         StaffName = "ZamaSUS",
                         RegistradoEn = _time.UtcNow,
                         NormalizedUserName = "OWNER"
                     };
-                    
+
                     usuario.PasswordHash = hasher.HashPassword(usuario, "PASSWORD1245");
 
                     context.Set<Usuario>().Add(usuario);
-                
+
                     context.SaveChanges();
                 }
 
-                if(!context.Set<IdentityUserRole<IdentityId>>().Any()) {
+                if (!context.Set<IdentityUserRole<IdentityId>>().Any())
+                {
                     context.Set<IdentityUserRole<IdentityId>>().AddRange([
                         new IdentityUserRole<IdentityId>() {
                             RoleId = roles[0].Id,
-                            UserId =ownerId 
+                            UserId =ownerId
                         },
                         new IdentityUserRole<IdentityId>() {
                             RoleId = roles[1].Id,
-                            UserId = ownerId 
+                            UserId = ownerId
                         }
                     ]);
 
@@ -90,8 +100,9 @@ namespace Infraestructure.Persistence
 
                 }
 
-                if(!context.Set<Categoria>().Any()){
-                    List<Categoria> categorias = [ 
+                if (!context.Set<Categoria>().Any())
+                {
+                    List<Categoria> categorias = [
                         new Categoria("General",false , [
                             new Subcategoria("General", "GEN"),
                             new Subcategoria("Politica", "POL"),
@@ -109,7 +120,7 @@ namespace Infraestructure.Persistence
                             new Subcategoria("Programacion", "PROG"),
                         ])
                     ];
-               
+
                     context.Set<Categoria>().AddRange(categorias);
 
                     context.SaveChanges();
@@ -124,10 +135,39 @@ namespace Infraestructure.Persistence
             base.OnModelCreating(builder);
 
             builder.Entity<Usuario>().Property(b => b.Id).HasConversion(id => id.Value, value => new(value)).HasColumnName("id");
-            
+
             builder.Entity<IdentityRole<IdentityId>>().Property(b => b.Id).HasConversion(id => id.Value, value => new(value)).HasColumnName("id");
 
             builder.ApplyConfigurationsFromAssembly(typeof(InkboardDbContext).Assembly);
+        }
+
+        public async override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+
+            var result =  await base.SaveChangesAsync(cancellationToken);
+            
+            await PublishDomainEventsAsync();
+
+            return result;
+        }
+
+        private async Task PublishDomainEventsAsync()
+        {
+            var domainEvents = ChangeTracker
+                .Entries<Entity>()
+                .Select(entry => entry.Entity)
+                .SelectMany(entity =>
+                {
+                    var domainEvents = entity.DomainEvents;
+
+                    return domainEvents;
+                })
+                .ToList();
+
+            foreach (var domainEvent in domainEvents)
+            {
+                await _publisher.Publish(domainEvent);
+            }
         }
     }
 }
