@@ -19,7 +19,7 @@ using WebAPI.Hub;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddSignalR();
+builder.Services.AddSignalR().AddJsonProtocol(options => options.PayloadSerializerOptions.PropertyNamingPolicy = new JsonLowerCaseNamingPolicy());
 
 builder.Services.AddIdentity<Usuario, IdentityRole<IdentityId>>()
 .AddRoles<IdentityRole<IdentityId>>()
@@ -44,7 +44,8 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthorization();
 
 builder.Services.AddAuthentication(
-    options => {
+    options =>
+    {
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
         options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
         options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -58,7 +59,7 @@ builder.Services.AddControllers();
 
 builder.Services.ConfigureHttpJsonOptions(options =>
 {
-    options.SerializerOptions.PropertyNamingPolicy =new JsonLowerCaseNamingPolicy();
+    options.SerializerOptions.PropertyNamingPolicy = new JsonLowerCaseNamingPolicy();
 });
 
 builder.Services.AddProblemDetails();
@@ -108,7 +109,7 @@ app.MapHub<HomeSignalrHub>("/hubs/home");
 
 app.UseStatusCodePages();
 
-app.UseCors(options => 
+app.UseCors(options =>
     options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()
 );
 
