@@ -10,7 +10,7 @@ namespace Application.Hilos.Queries.GetPortadas
     }
 
 
-    public class GetPortadaResponse 
+    public record GetPortadaResponse 
     {
         public Guid Id {get; set;}
         public Guid? Autor_Id {get; set;}

@@ -1,4 +1,5 @@
 using Application.Encuestas.Abstractions;
+using Application.Home.Abstractions;
 using Application.Medias.Abstractions.Providers;
 using Infraestructure.Services.Providers;
 using WebAPI.Hub;
@@ -12,6 +13,10 @@ namespace WebAPI
             services.AddScoped<IMediaFolderProvider, FolderProvider>();
 
             services.AddScoped<IEncuestaHub, EncuestasHub>();
+
+            services.AddScoped<IHomeHub, HomeHub>();
+
+            services.AddSingleton<HomeHubClients>();
             return services;
         }
     }

@@ -98,12 +98,13 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
 app.UseHttpsRedirection();
 app.UseExceptionHandler();
 
 
 app.MapHub<EncuestaSignalrHub>("/hubs/encuestas");
+
+app.MapHub<HomeSignalrHub>("/hubs/home");
 
 app.UseStatusCodePages();
 

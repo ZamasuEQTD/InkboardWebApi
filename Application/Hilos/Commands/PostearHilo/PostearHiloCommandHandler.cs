@@ -82,7 +82,7 @@ namespace Application.Hilos.Commands.PostearHilo
 
             _mediasRepository.Add(reference);
 
-            Hilo hilo = new Hilo(
+            Hilo hilo = Hilo.Create(
                 new IdentityId(_user.UsuarioId),
                 request.Titulo,
                 request.Descripcion,

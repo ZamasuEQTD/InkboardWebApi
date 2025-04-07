@@ -7,6 +7,7 @@ using Domain.Core.Abstractions;
 using Domain.Core.Models;
 using Domain.Denuncias.Models;
 using Domain.Encuestas.Models.ValueObjects;
+using Domain.Hilos.DomainEvents;
 using Domain.Hilos.Models.Enums;
 using Domain.Hilos.Models.ValueObjects;
 using Domain.Media.Models.ValueObjects;
@@ -25,7 +26,7 @@ namespace Domain.Hilos.Models
         public string Descripcion { get; private set; }
         public bool RecibirNotificaciones { get; private set; }
         public ConfiguracionDeComentarios Configuracion { get; private set; }
-        public AutorRole Autor {get; private set;}
+        public AutorRole Autor { get; private set; }
         public MediaSpoileableId PortadaId { get; private set; }
         public SubcategoriaId SubcategoriaId { get; private set; }
         public EncuestaId? EncuestaId { get; private set; }
@@ -34,7 +35,8 @@ namespace Domain.Hilos.Models
         public ICollection<Comentario> Comentarios { get; private set; } = [];
         public ICollection<ComentarioDestacado> ComentariosDestacados { get; private set; } = [];
         public ICollection<Notificacion> Notificaciones { get; private set; } = [];
-        public Hilo(
+        
+        private Hilo(
             IdentityId autorId,
             string titulo,
             string descripcion,
@@ -62,18 +64,18 @@ namespace Domain.Hilos.Models
 
         private Hilo() { }
 
-          public Result Comentar(Comentario comentario, DateTime now)
+        public Result Comentar(Comentario comentario, DateTime now)
         {
             if (!EstaActivo) return HiloErrors.HiloInactivo;
 
             Comentarios.Add(comentario);
 
-            if(!EsAutor(comentario.AutorId) && RecibirNotificaciones)
+            if (!EsAutor(comentario.AutorId) && RecibirNotificaciones)
             {
                 Notificaciones.Add(new HiloComentadoNotificacion(AutorId, Id, comentario.Id));
             }
 
-            List<string> tags = TagUtils.GetTags(comentario.Texto.Value); 
+            List<string> tags = TagUtils.GetTags(comentario.Texto.Value);
 
             foreach (var tag in tags)
             {
@@ -83,7 +85,7 @@ namespace Domain.Hilos.Models
                 {
                     respondido.AgregarRespuesta(comentario.Id);
 
-                    if(respondido.AutorId != comentario.AutorId && respondido.RecibirNotificaciones)
+                    if (respondido.AutorId != comentario.AutorId && respondido.RecibirNotificaciones)
                     {
                         Notificacion notificacion = new ComentarioRespondidoNotificacion(
                             respondido.AutorId,
@@ -104,12 +106,14 @@ namespace Domain.Hilos.Models
             return Result.Success();
         }
 
-        private void NotificarSeguidores(Comentario comentario){
-             List<IdentityId> seguidores = Interacciones.Where(i => i.Seguido).Select(i => i.UsuarioId).ToList();
+        private void NotificarSeguidores(Comentario comentario)
+        {
+            List<IdentityId> seguidores = Interacciones.Where(i => i.Seguido).Select(i => i.UsuarioId).ToList();
 
             foreach (IdentityId seguidor in seguidores)
             {
-                if(!comentario.EsAutor(seguidor)) {
+                if (!comentario.EsAutor(seguidor))
+                {
                     Notificaciones.Add(new HiloSeguidoNotificacion(seguidor, Id, comentario.Id));
                 }
             }
@@ -125,8 +129,8 @@ namespace Domain.Hilos.Models
 
             if (ComentarioEstaDestacado(comentario.Id))
             {
-                this.ComentariosDestacados = [..ComentariosDestacados.Where(c => c.Id == comentario.Id)];
-                
+                this.ComentariosDestacados = [.. ComentariosDestacados.Where(c => c.Id == comentario.Id)];
+
                 return Result.Success();
             }
 
@@ -145,6 +149,9 @@ namespace Domain.Hilos.Models
             DesestimarDenuncias();
 
             this.Status = HiloStatus.Eliminado;
+
+            Raise( new HiloEliminadoDomainEvent(this.Id.Value));
+
             return Result.Success();
         }
 
@@ -222,6 +229,34 @@ namespace Domain.Hilos.Models
         public bool ComentarioEstaDestacado(ComentarioId comentarioId) => this.ComentariosDestacados.Any(d => d.ComentarioId == comentarioId);
         public bool EsAutor(IdentityId usuarioId) => this.AutorId == usuarioId;
         public bool HaDenunciado(IdentityId usuarioId) => Denuncias.Any(d => d.DenuncianteId == usuarioId);
+    
+    
+    
+        public static Hilo Create(
+            IdentityId autorId,
+            string titulo,
+            string descripcion,
+            SubcategoriaId subcategoriaId,
+            MediaSpoileableId portadaId,
+            AutorRole autor,
+            EncuestaId? encuestaId,
+            ConfiguracionDeComentarios configuracion)
+        {
+            var hilo =  new Hilo(
+            autorId,
+            titulo,
+            descripcion,
+            subcategoriaId,
+            portadaId,
+            autor,
+            encuestaId,
+            configuracion
+            );
+
+            hilo.Raise(new HiloPosteadoDomainEvent(hilo.Id.Value));
+
+            return hilo;
+        }
     }
 
     public static class HiloErrors
