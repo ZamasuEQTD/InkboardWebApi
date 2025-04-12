@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Security.Claims;
 using Application.Core.Abstractions;
 using Application.Hilos.Queries.GetPortadas;
@@ -9,9 +10,9 @@ namespace WebAPI.Hub
 {
     public interface IHubClient : ICurrentUser
     {
-        string ConnectionId {get;}
+        string ConnectionId { get; }
     }
-   
+
     public class HomeHub : IHomeHub
     {
 
@@ -38,7 +39,7 @@ namespace WebAPI.Hub
                 {
                     Autor_Id = client.IsAuthenticated && portada.Autor_Id == client.UsuarioId ? portada.Autor_Id : null,
                     Recibir_Notificaciones = client.IsAuthenticated && portada.Autor_Id == client.UsuarioId ? portada.Recibir_Notificaciones : null,
-                    Es_Op = client.IsAuthenticated && portada.Autor_Id == client.UsuarioId && portada.Es_Op,  
+                    Es_Op = client.IsAuthenticated && portada.Autor_Id == client.UsuarioId && portada.Es_Op,
                 };
 
                 tasks.Add(_hub.Clients.Client(client.ConnectionId).OnHiloPosteado(response));
@@ -48,21 +49,47 @@ namespace WebAPI.Hub
         }
     }
 
-    public class HomeHubClients
+    public class HomeHubClients : IDisposable
     {
-        private Dictionary<string, IHubClient> _clientes = new();
+        private readonly ConcurrentDictionary<string, IHubClient> _clientes = new();
+        private readonly ReaderWriterLockSlim _lock = new();
 
-        public void Connect(IHubClient client) => _clientes.Add(client.ConnectionId, client);
+        public void Connect(IHubClient client)
+        {
+            _clientes.AddOrUpdate(client.ConnectionId,
+                client,
+                (_, existingClient) => client);
+        }
 
-        public void Disconnect(string connectionId) => _clientes.Remove(connectionId);
-    
-        public IHubClient GetClient(string connectionId) => _clientes[connectionId];
+        public bool Disconnect(string connectionId)
+        {
+            if (string.IsNullOrEmpty(connectionId))
+                throw new ArgumentException("ConnectionId no puede ser nulo o vacío", nameof(connectionId));
 
-        public List<IHubClient> Clientes => _clientes.Values.ToList();
+            return _clientes.TryRemove(connectionId, out _);
+        }
 
+        public IHubClient GetClient(string connectionId)
+        {
+            if (_clientes.TryGetValue(connectionId, out var client))
+            {
+                return client;
+            }
+            throw new KeyNotFoundException($"No se encontró el cliente con ConnectionId: {connectionId}");
+        }
+
+
+        public IReadOnlyList<IHubClient> Clientes => _clientes.Values.ToList().AsReadOnly();
+
+        public int Count => _clientes.Count;
+
+        public void Dispose()
+        {
+            _lock?.Dispose();
+        }
     }
 
-    public class HomeSignalrHub: Hub<IHomeHubClient>
+    public class HomeSignalrHub : Hub<IHomeHubClient>
     {
 
         private readonly HomeHubClients clients;
@@ -90,7 +117,8 @@ namespace WebAPI.Hub
         }
     }
 
-    public interface IHomeHubClient {
+    public interface IHomeHubClient
+    {
         Task OnHiloEliminado(Guid hiloId);
 
         Task OnHiloPosteado(GetPortadaResponse portada);
@@ -98,7 +126,6 @@ namespace WebAPI.Hub
 
     public class HubSignalrClient : IHubClient
     {
-
         private readonly HubCallerContext _context;
 
         public HubSignalrClient(HubCallerContext context)
@@ -106,7 +133,7 @@ namespace WebAPI.Hub
             _context = context;
         }
 
-        public string ConnectionId =>_context.ConnectionId;
+        public string ConnectionId => _context.ConnectionId;
 
         public bool IsAuthenticated => _context.User?
             .Identity?
@@ -117,8 +144,9 @@ namespace WebAPI.Hub
 
         public string Username => throw new NotImplementedException();
 
-        public List<string> Roles => _context.User.Claims.Where(s => s.Type == ClaimTypes.Role).Select(c=> c.Value).ToList() ;
+        public List<string> Roles => _context.User.Claims.Where(s => s.Type == ClaimTypes.Role).Select(c => c.Value).ToList();
 
         public bool EsModerador => Roles.Contains(AppRoles.Moderador);
     }
+
 }

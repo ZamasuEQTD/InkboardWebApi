@@ -88,7 +88,7 @@ namespace Application.Comentarios.Commands.ComentarHilo {
                 _mediasRepository.Add(reference);
             }
             
-            Comentario c = new Comentario(
+            Comentario c = Comentario.Create(
                 hilo.Id,
                 new IdentityId(_user.UsuarioId),
                 await _colorService.GenerarColor(hilo.SubcategoriaId),

@@ -1,4 +1,5 @@
 using Application.Encuestas.Abstractions;
+using Application.Hilos.Abstractions;
 using Application.Home.Abstractions;
 using Application.Medias.Abstractions.Providers;
 using Infraestructure.Services.Providers;
@@ -17,6 +18,11 @@ namespace WebAPI
             services.AddScoped<IHomeHub, HomeHub>();
 
             services.AddSingleton<HomeHubClients>();
+
+            services.AddSingleton<HilosHubClients>();
+
+            services.AddScoped<IHiloHub, HiloHub>();
+
             return services;
         }
     }

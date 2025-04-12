@@ -3,6 +3,7 @@ using Domain.Comentarios.Models.ValueObjects;
 using Domain.Core;
 using Domain.Core.Abstractions;
 using Domain.Core.Models;
+using Domain.Hilos.DomainEvents;
 using Domain.Hilos.Models;
 using Domain.Hilos.Models.ValueObjects;
 using Domain.Media.Models.ValueObjects;
@@ -18,7 +19,7 @@ namespace Domain.Comentarios.Models
         public HiloId HiloId { get; private set; }
         public IdentityId AutorId { get; private set; }
         public Color Color { get; private set; }
-        public AutorRole Autor {get; private set;}
+        public AutorRole Autor { get; private set; }
         public Texto Texto { get; private set; }
         public string Tag { get; private set; }
         public int? Dados { get; private set; }
@@ -55,6 +56,36 @@ namespace Domain.Comentarios.Models
             Autor = autor;
         }
         private Comentario() { }
+        public static Comentario Create(
+            HiloId hiloId,
+            IdentityId autorId,
+            Color color,
+            Texto texto,
+            AutorRole autor,
+            string tag,
+            MediaSpoileableId? mediaId = null,
+            int? dados = null,
+            string? tagUnico = null)
+        {
+            var comentario = new Comentario(
+                hiloId,
+                autorId,
+                color,
+                texto,
+                autor,
+                tag,
+                mediaId,
+                dados,
+                tagUnico);
+
+            comentario.Raise(new HiloComentadoDomainEvent()
+            {
+                ComentarioId = comentario.Id.Value,
+                HiloId = comentario.HiloId.Value
+            });
+
+            return comentario;
+        }
 
 
         public Result Eliminar(Hilo hilo)
@@ -66,7 +97,13 @@ namespace Domain.Comentarios.Models
             DesestimarDenuncias();
 
             this.Status = ComentariosStatus.Eliminado;
-            
+
+            Raise(new ComentarioEliminadoDomainEvent()
+            {
+                ComentarioId = Id.Value,
+                HiloId = HiloId.Value
+            });
+
             return Result.Success();
         }
 
@@ -75,7 +112,7 @@ namespace Domain.Comentarios.Models
             if (!EstaActivo) return Result.Failure(ComentarioErrors.ComentarioInactivo);
 
             Respuestas.Add(new RespuestaComentario(Id, respuesta));
-            
+
             return Result.Success();
         }
 
@@ -125,7 +162,7 @@ namespace Domain.Comentarios.Models
     public static class ComentarioErrors
     {
         public static readonly Error NoEncontrado = new("NoEncontrado", "El comentario no ha sido encontrado.");
-        
+
         public static readonly Error HiloEliminado = new("HiloEliminado", "El hilo está eliminado.");
         public static readonly Error ComentarioYaEliminado = new("ComentarioYaEliminado", "El comentario ya está eliminado.");
         public static readonly Error ComentarioInactivo = new("ComentarioInactivo", "El comentario está inactivo.");

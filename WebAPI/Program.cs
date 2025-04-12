@@ -107,6 +107,8 @@ app.MapHub<EncuestaSignalrHub>("/hubs/encuestas");
 
 app.MapHub<HomeSignalrHub>("/hubs/home");
 
+app.MapHub<HiloSignalrHub>("/hubs/hilos");
+
 app.UseStatusCodePages();
 
 app.UseCors(options =>

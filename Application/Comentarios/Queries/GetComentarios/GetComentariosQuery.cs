@@ -16,7 +16,7 @@ namespace Application.Comentarios.Queries.GetComentarios
         public List<GetComentarioResponse> Destacados {get;set;}   
     }
 
-    public class GetComentarioResponse
+    public record GetComentarioResponse
     {
         public Guid Id {get;set;}
         public string Texto {get;set;}
@@ -29,8 +29,8 @@ namespace Application.Comentarios.Queries.GetComentarios
         public bool Es_Autor {get;set;}
         public string Autor {get;set;}
         public string Autor_Role {get;set;}
-        public Guid Autor_Id {get;set;}
-        public bool Recibir_Notificaciones {get;set;}
+        public Guid? Autor_Id {get;set;}
+        public bool? Recibir_Notificaciones {get;set;}
         [JsonIgnore]
         public Guid Autor_Hilo_Id {get;set;}
         public DateTime Created_At {get;set;}
