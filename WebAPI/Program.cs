@@ -19,6 +19,17 @@ using WebAPI.Hub;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors( options =>
+{
+    options.AddDefaultPolicy(
+        policy =>
+        {
+            policy.AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+        });
+});
+
 builder.Services.AddSignalR().AddJsonProtocol(options => options.PayloadSerializerOptions.PropertyNamingPolicy = new JsonLowerCaseNamingPolicy());
 
 builder.Services.AddIdentity<Usuario, IdentityRole<IdentityId>>()
@@ -50,7 +61,25 @@ builder.Services.AddAuthentication(
         options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
         options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
     }
-).AddJwtBearer();
+).AddJwtBearer(options =>
+                {
+                    options.IncludeErrorDetails = true;
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnMessageReceived = context =>
+                        {
+                            var accessToken = context.Request.Query["access_token"];
+                            var path = context.HttpContext.Request.Path;
+
+                            if (!string.IsNullOrEmpty(accessToken))
+                            {
+                                context.Token = accessToken;
+                            }
+
+                            return Task.CompletedTask;
+                        }
+                    };
+                });
 
 builder.Services.ConfigureOptions<JwtOptionsSetup>();
 builder.Services.ConfigureOptions<JwtBearerOptionsSetup>();
@@ -66,6 +95,10 @@ builder.Services.AddProblemDetails();
 
 
 var app = builder.Build();
+
+app.UseCors(options =>
+    options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()
+);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -109,11 +142,10 @@ app.MapHub<HomeSignalrHub>("/hubs/home");
 
 app.MapHub<HiloSignalrHub>("/hubs/hilos");
 
-app.UseStatusCodePages();
+app.MapHub<NotificacionesSignalRHub>("/hubs/notificaciones");
 
-app.UseCors(options =>
-    options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()
-);
+
+app.UseStatusCodePages();
 
 
 app.Run();

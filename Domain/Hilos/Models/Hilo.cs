@@ -129,7 +129,6 @@ namespace Domain.Hilos.Models
 
             if (ComentarioEstaDestacado(comentario.Id))
             {
-                this.ComentariosDestacados = [.. ComentariosDestacados.Where(c => c.Id == comentario.Id)];
 
                 return Result.Success();
             }
@@ -139,6 +138,8 @@ namespace Domain.Hilos.Models
             this.ComentariosDestacados.Add(new ComentarioDestacado(comentario.Id, Id));
             return Result.Success();
         }
+
+        public void DejarDeDestacar(ComentarioId id ) => this.ComentariosDestacados = [.. ComentariosDestacados.Where(c => c.ComentarioId != id)];
 
         public Result Eliminar()
         {
@@ -150,7 +151,7 @@ namespace Domain.Hilos.Models
 
             this.Status = HiloStatus.Eliminado;
 
-            Raise( new HiloEliminadoDomainEvent(this.Id.Value));
+            Raise(new HiloEliminadoDomainEvent(this.Id.Value));
 
             return Result.Success();
         }

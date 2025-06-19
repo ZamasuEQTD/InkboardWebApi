@@ -73,7 +73,7 @@ namespace WebAPI.Hub
     public interface IHiloHubClient
     {
         Task OnHiloComentado(GetComentarioResponse comentario);
-        Task OnComentarioEliminado(Guid comentarioId);
+        Task OnComentarioEliminado(string comentarioTag);
     }
 
     public class HiloHub : IHiloHub
@@ -112,7 +112,7 @@ namespace WebAPI.Hub
             await Task.WhenAll(tasks);
         }
 
-        public async Task NotificarComentarioEliminado(Guid hiloId, Guid comentarioId)
+        public async Task NotificarComentarioEliminado(Guid hiloId, string comentarioTag)
         {
             var usuarios = _clients.ObtenerUsuariosEnHilo(hiloId);
 
@@ -120,7 +120,7 @@ namespace WebAPI.Hub
 
             foreach (var usuario in usuarios)
             {
-                tasks.Add(_hub.Clients.Client(usuario.ConnectionId).OnComentarioEliminado(comentarioId));
+                tasks.Add(_hub.Clients.Client(usuario.ConnectionId).OnComentarioEliminado(comentarioTag));
             }
 
             await Task.WhenAll(tasks);

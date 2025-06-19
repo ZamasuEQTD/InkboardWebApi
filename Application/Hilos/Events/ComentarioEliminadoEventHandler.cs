@@ -15,9 +15,7 @@ namespace Application.Hilos.Events{
         public async Task Handle(ComentarioEliminadoDomainEvent notification, CancellationToken cancellationToken)
         {
 
-            Console.WriteLine($"Comentario eliminado {notification.ComentarioId}");
-            
-           await _hiloHub.NotificarComentarioEliminado(notification.HiloId, notification.ComentarioId);;
+           await _hiloHub.NotificarComentarioEliminado(notification.HiloId, notification.ComentarioTag);;
         }
     }
 }

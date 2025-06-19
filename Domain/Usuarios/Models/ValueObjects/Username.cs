@@ -22,7 +22,7 @@ namespace Domain.Usuarios.Models.ValueObjects
 
             return new Username()
             {
-                Value = value
+                Value = value,
             };
         }
 

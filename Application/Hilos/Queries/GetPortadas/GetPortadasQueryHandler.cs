@@ -43,7 +43,12 @@ namespace Application.Hilos.Queries.GetPortadas
             if(request.UltimaPortada is not null ) {
                 builder.Where("ultimo_bump < (SELECT ultimo_bump FROM hilos WHERE id = @Id)", new { Id = (Guid) request.UltimaPortada});
             }
-            
+
+            if (request.Titulo is not null)
+            {
+                builder.Where("titulo ~* @Titulo", new {request.Titulo});
+            }
+
             SqlBuilder.Template template = builder.AddTemplate(sql);
 
             var portadas = await connection.QueryAsync<GetPortadaResponse,GetBanderas, GetPortadaMiniatura, GetPortadaResponse>(template.RawSql,

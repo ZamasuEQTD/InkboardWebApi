@@ -2,6 +2,7 @@ using Application.Encuestas.Abstractions;
 using Application.Hilos.Abstractions;
 using Application.Home.Abstractions;
 using Application.Medias.Abstractions.Providers;
+using Application.Notificaciones.Abstractions;
 using Infraestructure.Services.Providers;
 using WebAPI.Hub;
 
@@ -23,6 +24,7 @@ namespace WebAPI
 
             services.AddScoped<IHiloHub, HiloHub>();
 
+            services.AddSingleton<INotificacionesHub, NotificacionesHub>();
             return services;
         }
     }

@@ -27,24 +27,17 @@ namespace Application.Hilos.Events
 
             var sql = @"
                 SELECT 
-                    c.*,
-                    respuesta.tag as respondido,
-                    responde.tag as responde
-                FROM vw_comentarios_en_hilo c
-                LEFT JOIN respuesta_comentario rc ON rc.respondido_id = c.id
-                LEFT JOIN comentarios respuesta ON rc.respuesta_id = respuesta.id  
-                LEFT JOIN respuesta_comentario cr ON cr.respuesta_id = c.id
-                LEFT JOIN comentarios responde ON cr.respondido_id = responde.id
+                    c.*
+                FROM vw_comentarios_con_relaciones c
                 WHERE
-                    c.hilo_id = @HiloId
-                    AND c.id = @ComentarioId
+                    c.hilo_id = @HiloId AND c.id = @ComentarioId
                
             ";
 
             Dictionary<Guid, GetComentarioResponse> _comentariosDic = new Dictionary<Guid, GetComentarioResponse>();
 
             var comentarios = await connection.QueryAsync<GetComentarioResponse, GetMediaResponse?, string, string, GetComentarioResponse>(sql,
-                        (comentario, media, respondido, responde) =>
+                        (comentario, media, responde, respondido) =>
             {
                 if (!_comentariosDic.TryGetValue(comentario.Id, out var comentarioEntry))
                 {
@@ -73,7 +66,7 @@ namespace Application.Hilos.Events
                 notification.HiloId,
                 notification.ComentarioId
             },
-            splitOn: "url, respondido, responde");
+            splitOn: "url,responde_a_tag,respondido_por_tag");
 
             await _hiloHub.NotificarHiloComentado(notification.HiloId, comentarios.First());
         }

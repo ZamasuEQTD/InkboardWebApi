@@ -5,8 +5,9 @@ namespace Application.Hilos.Queries.GetPortadas
 {
     public class GetPortadasQuery : IQuery<List<GetPortadaResponse>>
     {
-        public Guid? UltimaPortada {get; set;}
+        public Guid? UltimaPortada { get; set; }
         public List<Guid> CategoriasBloqueadas = [];
+        public string? Titulo { get; set; }
     }
 
 

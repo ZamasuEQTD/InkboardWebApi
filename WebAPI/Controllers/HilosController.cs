@@ -165,9 +165,11 @@ namespace WebAPI.Controllers
         [HttpGet()]
         public async Task<IResult> Index([FromQuery] GetPortadasRequest request){
             
-            var result = await sender.Send(new GetPortadasQuery(){
+            var result = await sender.Send(new GetPortadasQuery()
+            {
                 UltimaPortada = request.UltimaPortada,
-                CategoriasBloqueadas = request.CategoriasBloqueadas 
+                CategoriasBloqueadas = request.CategoriasBloqueadas,
+                Titulo = request.Titulo
             });
             return result.ToResult();
         }
@@ -189,5 +191,6 @@ namespace WebAPI.Controllers
     {
         public Guid? UltimaPortada { get; set; }
         public List<Guid> CategoriasBloqueadas { get; set; } = [];
+        public string? Titulo { get; set; }
     }
 }

@@ -2,6 +2,7 @@ using Domain.Comentarios.Models.ValueObjects;
 using Domain.Core;
 using Domain.Core.Abstractions;
 using Domain.Hilos.Models.ValueObjects;
+using Domain.Notificaciones.DomainEvents;
 using Domain.Notificaciones.ValueObjects;
 using Domain.Usuarios.Models.ValueObjects;
 
@@ -22,6 +23,8 @@ namespace Domain.Notificaciones
             this.Leida = false;
             HiloId = hiloId;
             ComentarioId = comentarioId;
+
+            base.DomainEvents.Add(new NotificacionCreadaDomainEvent(Id.Value, NotificadoId.Value));
         }
 
         public Result Leer(IdentityId IdentityId)

@@ -37,9 +37,9 @@ namespace Application.Comentarios.Queries.GetComentarios
         public HashSet<string> Responde_A {get;set;} = [];
         public HashSet<string> Respondido_Por {get;set;} = [];
         [JsonIgnore]
-        public string Responde {get;set;}
+        public string Responde_a_Tag {get;set;}
         [JsonIgnore]
-        public string Respondido {get;set;}
+        public string Respondido_Por_Tag {get;set;}
         public GetMediaResponse? Media {get;set;}
     }
 }

@@ -38,9 +38,11 @@ namespace Application.Auth.Commands.Registro
 
             PasswordHasher<Usuario> hasher = new PasswordHasher<Usuario>();
 
-            usuario = new Usuario (){
+            usuario = new Usuario()
+            {
                 Id = new IdentityId(Guid.NewGuid()),
-                UserName = request.Username
+                UserName = request.Username,
+                RegistradoEn = DateTime.UtcNow,
             };
 
             usuario.PasswordHash = hasher.HashPassword(usuario, request.Password);

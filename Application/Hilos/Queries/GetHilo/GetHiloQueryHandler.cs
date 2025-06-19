@@ -24,79 +24,87 @@ namespace Application.Hilos.Queries.GetHilo {
 
             GetEncuestaResponse? _encuesta = null;
 
-            var responses = await  connection.QueryAsync<GetHiloResponse,GetMediaResponse,GetSubcategoriaResponse,GetEncuestaResponse,GetEncuestaRespuestaResponse, GetHiloResponse>(@"
-                WITH HilosFiltrados AS (
-                    SELECT *
-                    FROM hilos
-                    WHERE id = @HiloId AND status = 0
-                ),
-                ComentariosAgregados AS (
-                    SELECT
-                        hilo_id,
-                        SUM(CASE status WHEN 0 THEN 1 ELSE 0 END) AS cantidad_comentarios
-                    FROM comentarios
-                    GROUP BY hilo_id
-                ),
-                VotosAgregados AS (
-                    SELECT
-                        respuesta_id,
-                        COUNT(id) AS votos
-                    FROM votos
-                    GROUP BY respuesta_id
-                )
-                SELECT
-                    hilo.id,
-                    hilo.titulo,
-                    hilo.descripcion,
-                    hilo.created_at,
-                    hilo.autor_role,
-                    hilo.autor_username AS autor,
-                    COALESCE(comentarios.cantidad_comentarios, 0) AS cantidad_comentarios,
-                    hilo.autor_id,
-                    hilo.recibir_notificaciones,
-                    portada.url,
-                    portada.previsualizacion,
-                    spoiler.spoiler,
-                    portada.provider,
-                    subcategoria.id,
-                    subcategoria.nombre,
-                    encuesta.id,
-                    voto_usuario.respuesta_id AS respuesta_votada,
-                    respuesta.id,
-                    respuesta.contenido AS respuesta,
-                    COALESCE(votos.votos, 0) AS votos
-                FROM HilosFiltrados hilo
-                JOIN subcategorias subcategoria ON subcategoria.id = hilo.subcategoria_id
-                JOIN medias_spoileables spoiler ON hilo.portada_id = spoiler.id
-                JOIN medias portada ON spoiler.hashed_media_id = portada.id
-                LEFT JOIN ComentariosAgregados comentarios ON hilo.id = comentarios.hilo_id
-                LEFT JOIN encuestas encuesta ON hilo.encuesta_id = encuesta.id
-                LEFT JOIN respuestas respuesta ON encuesta.id = respuesta.encuesta_id
-                LEFT JOIN VotosAgregados votos ON respuesta.id = votos.respuesta_id
-                LEFT JOIN votos voto_usuario ON respuesta.id = voto_usuario.respuesta_id AND voto_usuario.votante_id = @UsuarioId;
-            ", (hilo, media, subcategoria, encuesta, respuesta) => {
+            var responses = await connection.QueryAsync<GetHiloResponse, GetMediaResponse, GetSubcategoriaResponse, GetEncuestaResponse, GetEncuestaRespuestaResponse, GetHiloResponse>(
+                @"
+SELECT
+    hilo.id,
+    hilo.titulo,
+    hilo.descripcion,
+    hilo.created_at,
+    hilo.autor_role,
+    hilo.autor_username AS autor,
+    hilo.autor_id,
+    hilo.recibir_notificaciones,
+    COALESCE(comentarios_agrupados.cantidad_comentarios, 0) AS cantidad_comentarios,
+    portada.url,
+    portada.previsualizacion,
+    portada.spoiler,
+    portada.provider,
+    subcategoria.id,
+    subcategoria.nombre,
+    encuesta.id,
+    votos_agrupados.respuesta_votada,
+    encuesta.respuesta_id as id,
+    encuesta.respuesta,
+    encuesta.votos
+FROM
+    hilos hilo
+JOIN subcategorias subcategoria ON hilo.subcategoria_id = subcategoria.id
+JOIN vw_spoileable_hashed_medias portada ON hilo.portada_id = portada.id
+LEFT JOIN vw_encuestas encuesta ON hilo.encuesta_id = encuesta.id
+LEFT JOIN (
+    SELECT
+        hilo_id,
+        COUNT(*) AS cantidad_comentarios
+    FROM
+        comentarios
+    WHERE
+        status = 0
+    GROUP BY
+        hilo_id
+) AS comentarios_agrupados ON hilo.id = comentarios_agrupados.hilo_id
+LEFT JOIN (
+    SELECT
+        encuesta_id,
+        respuesta_id AS respuesta_votada
+    FROM
+        votos
+    WHERE
+        votante_id = @UsuarioId
+) AS votos_agrupados ON hilo.encuesta_id = votos_agrupados.encuesta_id
+WHERE
+    hilo.id = @HiloId AND hilo.status = 0;
+                ",
+                (hilo, media, subcategoria, encuesta, respuesta) =>
+                {
+                    hilo.Media = media;
+                    hilo.Subcategoria = subcategoria;
 
-                hilo.Media = media;
+                    if (_encuesta is not null)
+                    {
+                        encuesta = _encuesta;
+                    }
+                    else
+                    {
+                        _encuesta = encuesta;
+                    }
 
-                hilo.Subcategoria = subcategoria;
+                    if (respuesta is not null)
+                    {
+                        _encuesta!.Respuestas.Add(respuesta);
+                    }
 
-                if(_encuesta is not null){
-                    encuesta = _encuesta;
-                } else {
-                    _encuesta = encuesta;
-                }
+                    hilo.Encuesta = _encuesta;
 
-                if(respuesta is not null){
-                    _encuesta!.Respuestas.Add(respuesta);
-                }
-            
-                hilo.Encuesta = _encuesta;
-
-                return hilo;
-            }, new {
-                request.HiloId,
-                UsuarioId = _user.IsAuthenticated? (Guid?) _user.UsuarioId : null
-            },splitOn : "id, url, id, id, id");
+                    return hilo;
+                },
+                new
+                {
+                    request.HiloId,
+                    UsuarioId = _user.IsAuthenticated ? (Guid?)_user.UsuarioId : null
+                },
+                splitOn: "id, url, id, id, id"
+            );
 
 
             GetHiloResponse? hilo = responses.FirstOrDefault();

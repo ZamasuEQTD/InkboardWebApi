@@ -96,11 +96,13 @@ namespace Domain.Comentarios.Models
 
             DesestimarDenuncias();
 
+            hilo.DejarDeDestacar(this.Id);
+
             this.Status = ComentariosStatus.Eliminado;
 
             Raise(new ComentarioEliminadoDomainEvent()
             {
-                ComentarioId = Id.Value,
+                ComentarioTag = Tag,
                 HiloId = HiloId.Value
             });
 

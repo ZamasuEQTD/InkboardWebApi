@@ -25,21 +25,14 @@ namespace Application.Comentarios.Queries.GetComentarios
 
             var destacadossql = @"
                 SELECT
-                    c.*,
-                    respuesta.tag as respondido,
-                    responde.tag as responde
-                FROM vw_comentarios_destacados_en_hilo c
-                LEFT JOIN respuesta_comentario rc ON rc.respondido_id = c.id
-                LEFT JOIN comentarios respuesta ON rc.respuesta_id = respuesta.id  
-                LEFT JOIN respuesta_comentario cr ON cr.respuesta_id = c.id
-                LEFT JOIN comentarios responde ON cr.respondido_id = responde.id
+                    *
+                FROM vw_comentarios_destacados c
                 WHERE c.hilo_id = @Hilo
             ";
 
             Dictionary<Guid, GetComentarioResponse> _comentariosDestacadosDic = new Dictionary<Guid, GetComentarioResponse>();
 
-            var destacados = await connection.QueryAsync<GetComentarioResponse,  GetMediaResponse?, string, string, GetComentarioResponse>(destacadossql,
-                        (comentario, media, respondido, responde) =>
+            var destacados = await connection.QueryAsync<GetComentarioResponse,  GetMediaResponse?, string, string, GetComentarioResponse>(destacadossql, (comentario, media,  responde,respondido) =>
             {
                 if (!_comentariosDestacadosDic.TryGetValue(comentario.Id, out var comentarioEntry))
                 {
@@ -63,18 +56,12 @@ namespace Application.Comentarios.Queries.GetComentarios
             }, new
             {
                 request.Hilo,
-            }, splitOn: "url,respondido,responde");
+            }, splitOn: "url,responde_a_tag,respondido_por_tag");
 
             var sql = @"
                 SELECT 
-                    c.*,
-                    respuesta.tag as respondido,
-                    responde.tag as responde
-                FROM vw_comentarios_en_hilo c
-                LEFT JOIN respuesta_comentario rc ON rc.respondido_id = c.id
-                LEFT JOIN comentarios respuesta ON rc.respuesta_id = respuesta.id  
-                LEFT JOIN respuesta_comentario cr ON cr.respuesta_id = c.id
-                LEFT JOIN comentarios responde ON cr.respondido_id = responde.id
+                    * 
+                FROM vw_comentarios_con_relaciones c
                 WHERE 
                     c.status = 0  AND c.hilo_id = @Hilo AND
                     (NOT @IsAuthenticated OR c.id NOT IN (
@@ -90,7 +77,7 @@ namespace Application.Comentarios.Queries.GetComentarios
             Dictionary<Guid, GetComentarioResponse> _comentariosDic = new Dictionary<Guid, GetComentarioResponse>();
 
             var comentarios = await connection.QueryAsync<GetComentarioResponse,GetMediaResponse?,string, string, GetComentarioResponse>(sql,
-                        (comentario, media, respondido, responde) =>
+                        (comentario, media,  responde,respondido) =>
             {
                 if (!_comentariosDic.TryGetValue(comentario.Id, out var comentarioEntry))
                 {
@@ -120,7 +107,7 @@ namespace Application.Comentarios.Queries.GetComentarios
                 this._user.IsAuthenticated,
                 usuarioId = this._user.IsAuthenticated ? (Guid?)_user.UsuarioId : null
             },
-            splitOn: "url, respondido, responde");
+            splitOn: "url, responde_a_tag, respondido_por_tag");
 
             var destacadosList = _comentariosDestacadosDic.Values.Select(c =>
             {
